@@ -20,9 +20,11 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  DialogTitle,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { format } from "date-fns";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 const useStyles = makeStyles({
   root: {
@@ -32,7 +34,7 @@ const useStyles = makeStyles({
       boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)",
       transform: "scale(1.02)",
       transition: "transform 0.3s ease-in-out",
-      cursor: "pointer",
+      // cursor: "pointer",
     },
   },
   media: {
@@ -65,9 +67,12 @@ const CustomerOrder = ({ orderId }) => {
   const [cart, setCart] = useState(null);
   const [isInCart, setIsInCart] = useState([]);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [stripeCheckoutOpen, setStripeCheckoutOpen] = useState(false);
   const { context } = useStateContext();
   const customerId = context.id;
   const isCustomer = context.isCustomer;
+  const stripe = useStripe();
+  const elements = useElements();
 
   const fetchOrder = async () => {
     try {
@@ -206,7 +211,7 @@ const CustomerOrder = ({ orderId }) => {
       );
     };
 
-    const handleMakeOrder = () => {
+    const handleConfirmOrder = async () => {
       const newRecord = {
         customerId: customerId,
         vendorId: orderVendorId,
@@ -214,22 +219,68 @@ const CustomerOrder = ({ orderId }) => {
         cartId: cart.id,
       };
 
-      createAPIEndpoint(ENDPOINTS.orders)
-        .postOrder(
-          customerId,
-          orderVendorId,
-          orderKitchenId,
-          cart.id,
-          newRecord
-        )
-        .then((res) => {
-          setOrder(res.data);
-          setOrderCreated(true);
-        })
-        .catch((err) => console.log(err));
+      console.log(order.totalPrice);
+
+      try {
+        setLoading(true);
+
+        // Create a payment intent
+        createAPIEndpoint(ENDPOINTS.orders)
+          .postPaymentIntent({ amount: order.totalPrice })
+          .then((res) => {
+            const clientSecret = res.data.clientSecret;
+            const paymentIntentId = res.data.paymentIntentId;
+
+            // Confirm the card payment using Stripe
+            stripe
+              .confirmCardPayment(clientSecret, {
+                payment_method: {
+                  card: elements.getElement(CardElement),
+                },
+                paymentIntentId: paymentIntentId,
+              })
+
+              .then((result) => {
+                if (result.error) {
+                  console.error(result.error.message);
+                } else {
+                  console.log("Payment successful!", result.paymentIntent);
+
+                  // Create the order on the server
+                  createAPIEndpoint(ENDPOINTS.orders)
+                    .postOrder(
+                      customerId,
+                      orderVendorId,
+                      orderKitchenId,
+                      cart.id,
+                      newRecord
+                    )
+                    .then((res) => {
+                      setOrder(res.data);
+                      setOrderCreated(true);
+                    })
+                    .catch((err) => console.log(err));
+                }
+              })
+              .catch((err) => console.log(err));
+          })
+          .catch((err) => console.log(err));
+      } catch (error) {
+        console.error("Error:", error.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const handleDeleteOrder = () => {
+    const handleMakeOrder = async () => {
+      setStripeCheckoutOpen(true);
+    };
+
+    const handleStripeCheckoutClose = () => {
+      setStripeCheckoutOpen(false);
+    };
+
+    const handleCancelOrder = () => {
       setConfirmDialogOpen(true);
     };
 
@@ -291,7 +342,7 @@ const CustomerOrder = ({ orderId }) => {
             variant="contained"
             color="error"
             disabled={order.status !== "Pending"}
-            onClick={handleDeleteOrder}
+            onClick={handleCancelOrder}
             fullWidth
           >
             Cancel Order
@@ -339,7 +390,7 @@ const CustomerOrder = ({ orderId }) => {
             variant="contained"
             color="error"
             disabled={order.status !== "Pending"}
-            onClick={handleDeleteOrder}
+            onClick={handleCancelOrder}
           >
             Cancel Order
           </Button>
@@ -354,6 +405,44 @@ const CustomerOrder = ({ orderId }) => {
           >
             Reorder
           </Button>
+          <Dialog open={stripeCheckoutOpen} onClose={handleStripeCheckoutClose}>
+            <DialogTitle>Reorder</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please enter your fake credit card details:
+              </DialogContentText>
+              <br />
+              <CardElement
+                options={{
+                  style: {
+                    base: {
+                      fontSize: "16px",
+                      color: "#424770",
+                      "::placeholder": {
+                        color: "#aab7c4",
+                      },
+                    },
+                    invalid: {
+                      color: "#9e2146",
+                    },
+                  },
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleStripeCheckoutClose} color="primary">
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirmOrder}
+                color="primary"
+                disabled={!stripe}
+              >
+                Confirm Order
+              </Button>
+            </DialogActions>
+          </Dialog>
+
           <Dialog
             open={confirmDialogOpen}
             onClose={handleCancelDelete}
@@ -380,6 +469,7 @@ const CustomerOrder = ({ orderId }) => {
 
   return (
     <Card
+      className={classes.root}
       sx={{
         opacity: loading ? 0.5 : 1,
         transition: "opacity 1s",

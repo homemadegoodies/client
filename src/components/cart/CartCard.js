@@ -19,12 +19,19 @@ import {
   OutlinedInput,
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogContentText,
   DialogActions,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { makeStyles } from "@mui/styles";
+import {
+  CardElement,
+  useStripe,
+  useElements,
+  Elements,
+} from "@stripe/react-stripe-js";
 
 const useStyles = makeStyles({
   root: {
@@ -34,7 +41,7 @@ const useStyles = makeStyles({
       boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)",
       transform: "scale(1.02)",
       transition: "transform 0.3s ease-in-out",
-      cursor: "pointer",
+      // cursor: "pointer",
     },
   },
   media: {
@@ -64,11 +71,14 @@ const CartCard = ({ cartId }) => {
   const [cartProducts, setCartProducts] = useState([]);
   const [isInCart, setIsInCart] = useState([]);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [stripeCheckoutOpen, setStripeCheckoutOpen] = useState(false);
   const [orderCreated, setOrderCreated] = useState(false);
   const [cartDeleted, setCartDeleted] = useState(false);
   const { context } = useStateContext();
   const customerId = context.id;
   const isCustomer = context.isCustomer;
+  const stripe = useStripe();
+  const elements = useElements();
 
   const fetchCart = async () => {
     try {
@@ -242,21 +252,70 @@ const CartCard = ({ cartId }) => {
       );
     };
 
-    const handleMakeOrder = () => {
+    const handleConfirmOrder = async () => {
       const newRecord = {
         customerId: customerId,
         vendorId: orderVendorId,
         kitchenId: cartKitchenId,
         cartId: cart.id,
       };
+      try {
+        setLoading(true);
 
-      createAPIEndpoint(ENDPOINTS.orders)
-        .postOrder(customerId, orderVendorId, cartKitchenId, cart.id, newRecord)
-        .then((res) => {
-          setOrder(res.data);
-          setOrderCreated(true);
-        })
-        .catch((err) => console.log(err));
+        // Create a payment intent
+        createAPIEndpoint(ENDPOINTS.orders)
+          .postPaymentIntent({ amount: cart.totalPrice })
+          .then((res) => {
+            const clientSecret = res.data.clientSecret;
+            const paymentIntentId = res.data.paymentIntentId;
+
+            // Confirm the card payment using Stripe
+            stripe
+              .confirmCardPayment(clientSecret, {
+                payment_method: {
+                  card: elements.getElement(CardElement),
+                },
+                paymentIntentId: paymentIntentId,
+              })
+
+              .then((result) => {
+                if (result.error) {
+                  console.error(result.error.message);
+                } else {
+                  console.log("Payment successful!", result.paymentIntent);
+
+                  // Create the order on the server
+                  createAPIEndpoint(ENDPOINTS.orders)
+                    .postOrder(
+                      customerId,
+                      orderVendorId,
+                      cartKitchenId,
+                      cart.id,
+                      newRecord
+                    )
+                    .then((res) => {
+                      setOrder(res.data);
+                      setOrderCreated(true);
+                    })
+                    .catch((err) => console.log(err));
+                }
+              })
+              .catch((err) => console.log(err));
+          })
+          .catch((err) => console.log(err));
+      } catch (error) {
+        console.error("Error:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const handleMakeOrder = async () => {
+      setStripeCheckoutOpen(true);
+    };
+
+    const handleStripeCheckoutClose = () => {
+      setStripeCheckoutOpen(false);
     };
 
     const handleDeleteCart = () => {
@@ -337,6 +396,47 @@ const CartCard = ({ cartId }) => {
               </Button>
             )}
             <Dialog
+              open={stripeCheckoutOpen}
+              onClose={handleStripeCheckoutClose}
+            >
+              <DialogTitle>Make an Order</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Please enter your fake credit card details:
+                </DialogContentText>
+                <br />
+                <CardElement
+                  options={{
+                    style: {
+                      base: {
+                        fontSize: "16px",
+                        color: "#424770",
+                        "::placeholder": {
+                          color: "#aab7c4",
+                        },
+                      },
+                      invalid: {
+                        color: "#9e2146",
+                      },
+                    },
+                  }}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleStripeCheckoutClose} color="primary">
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleConfirmOrder}
+                  color="primary"
+                  disabled={!stripe}
+                >
+                  Confirm Order
+                </Button>
+              </DialogActions>
+            </Dialog>
+
+            <Dialog
               open={confirmDialogOpen}
               onClose={handleCancelDelete}
               aria-describedby="alert-dialog-description"
@@ -363,6 +463,7 @@ const CartCard = ({ cartId }) => {
 
   return (
     <Card
+      className={classes.root}
       sx={{
         opacity: loading ? 0.5 : 1,
         transition: "opacity 1s",

@@ -29,11 +29,37 @@ export default function AboutView() {
               color="text.secondary"
               paragraph
             >
-              Welcome to Digital Fuse, the platform designed to teach Arabic
-              speaking seniors how to use technology to stay connected and start
-              businesses. Our mission is to empower older individuals in the
-              Arabic speaking community by providing them with the skills and
-              knowledge necessary to navigate the digital world.
+              Welcome to Homemade Goodies - your one-stop digital marketplace
+              for delicious homemade foods! We believe that the heart and soul
+              of authentic cuisine lie in cherished family recipes, lovingly
+              prepared by professional home cooks. Our platform is designed to
+              connect these culinary artisans from across Ontario with food
+              enthusiasts who crave wholesome and genuine flavors.
+            </Typography>
+
+            <Typography
+              variant="h5"
+              align="center"
+              color="text.secondary"
+              paragraph
+            >
+              At Homemade Goodies, we understand that not everyone has the time
+              or expertise to cook gourmet meals, but everyone deserves to savor
+              the delight of homemade goodness. Whether you're a talented home
+              cook looking to share your culinary creations or a food lover
+              seeking authentic dishes, our application is here to cater to your
+              cravings.
+            </Typography>
+
+            <Typography
+              variant="h5"
+              align="center"
+              color="text.secondary"
+              paragraph
+            >
+              Join us in celebrating the joy of home-cooked meals, where every
+              bite tells a unique story of tradition, passion, and mouthwatering
+              flavors. Embrace the warmth of homemade goodness today!
             </Typography>
             <Section />
 
@@ -68,24 +94,24 @@ export default function AboutView() {
                       color="text.primary"
                       paragraph
                     >
-                      How to Use the app as a vendor:
+                      How to use the app as a Vendor:
                     </Typography>
                     <Typography variant="body1" color="text.primary" paragraph>
-                      1. Get started by signing up as a vendor or log in if you
-                      already have an account.
+                      1. Join the vendor community: Sign up or log in to your
+                      account.
                     </Typography>
                     <Typography variant="body1" color="text.primary" paragraph>
-                      2. Create tasty products that customers will love and
-                      learn from.
+                      2. Craft irresistible products and inspire customers.
                     </Typography>
                     <Typography variant="body1" color="text.primary" paragraph>
-                      3. Confirm your orders.
+                      3. Seal the deal: Confirm orders like a pro.
                     </Typography>
                     <Typography variant="body1" color="text.primary" paragraph>
-                      4. View your charts.
+                      4. Track your success: Check out your charts for growth
+                      insights.
                     </Typography>
                     <Typography variant="body1" color="text.primary" paragraph>
-                      5. Get ready to teach and share your passion with the
+                      5. Embrace your stage: Share your passion and teach the
                       world!
                     </Typography>
                   </Card>
@@ -112,24 +138,22 @@ export default function AboutView() {
                       color="text.primary"
                       paragraph
                     >
-                      How to use the app as a customer:
+                      How to use the app as a Customer:
                     </Typography>
                     <Typography variant="body1" color="text.primary" paragraph>
-                      1. Get started by signing up as a customr or log in if you
-                      already have an account.
+                      1. Kickstart your journey by signing up or logging in.
                     </Typography>
                     <Typography variant="body1" color="text.primary" paragraph>
-                      2. Look for the kitchens you are interested in and click
-                      on them.
+                      2. Discover exciting kitchens and explore their offerings.
                     </Typography>
                     <Typography variant="body1" color="text.primary" paragraph>
-                      3. Add the products to your cart.
+                      3. Tap to add favorites and fill your carts with delight.
                     </Typography>
                     <Typography variant="body1" color="text.primary" paragraph>
-                      4. Make an order.
+                      4. Place an order securely without real credit cards.
                     </Typography>
                     <Typography variant="body1" color="text.primary" paragraph>
-                      5. Enjoy your food!
+                      5. Savor the goodness – bon appétit!
                     </Typography>
                   </Card>
                 </Grid>
@@ -167,11 +191,11 @@ export default function AboutView() {
                       paragraph
                     >
                       We've used cutting-edge technologies like React 18,
-                      Material UI, ASP.NET Core 6, and PostgreSQL to build the
-                      app! The backend is hosted on Heroku, the database on AWS,
-                      and the frontend on Netlify. And guess what? The source
-                      code is available on{" "}
-                      <Link href="https://github.com/orgs/boardwalkabp/repositories">
+                      Material UI, ASP.NET Core 6, Docker, and PostgreSQL to
+                      build the app! The backend and database are hosted on
+                      Render, and the frontend on Netlify. And guess what? The
+                      source code is available on{" "}
+                      <Link href="https://github.com/orgs/homemadegoodies/repositories">
                         GitHub
                       </Link>{" "}
                       too!

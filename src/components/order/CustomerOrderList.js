@@ -11,6 +11,12 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(
+  "pk_test_51NVE92IafsfL0hXWGhKEypQr8KlpU5o5ssFHvrrrizmjSLYhPxX8lodNpTVLQtpQj2ikwbcuSA6tkjTIfn1aAtmj009BOYWKqM"
+);
 
 const CustomerOrders = () => {
   const [loading, setLoading] = useState(false);
@@ -99,74 +105,76 @@ const CustomerOrders = () => {
   }
 
   return (
-    <Slide in={true} direction="right" mountOnEnter unmountOnExit>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <div style={{ width: "90%" }}>
-          <TextField
-            label="Search orders"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={searchQuery}
-            onChange={handleSearch}
-          />
-          <br />
+    <Elements stripe={stripePromise}>
+      <Slide in={true} direction="right" mountOnEnter unmountOnExit>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <div style={{ width: "90%" }}>
+            <TextField
+              label="Search orders"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={searchQuery}
+              onChange={handleSearch}
+            />
+            <br />
 
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                select
-                label="Status"
-                value={selectedStatus}
-                onChange={handleStatusChange}
-                variant="outlined"
-                fullWidth
-                margin="normal"
-              >
-                {orderStatuses.map((status) => (
-                  <MenuItem key={status.value} value={status.value}>
-                    {status.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                select
-                label="Sort By Total Price"
-                value={selectedTotalPrice}
-                onChange={handleTotalPriceChange}
-                variant="outlined"
-                fullWidth
-                margin="normal"
-              >
-                {totalPriceOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-          </Grid>
-
-          <Grid container spacing={3}>
-            {filteredOrders.map((order) => (
-              <Grid item key={order.id} xs={12} sm={6} md={4}>
-                <Grow in={true} timeout={500}>
-                  <div>
-                    {/* Use your CustomerOrderCard component here passing order details */}
-                    <CustomerOrderCard
-                      customerId={customerId}
-                      orderId={order.id}
-                    />
-                  </div>
-                </Grow>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  select
+                  label="Status"
+                  value={selectedStatus}
+                  onChange={handleStatusChange}
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                >
+                  {orderStatuses.map((status) => (
+                    <MenuItem key={status.value} value={status.value}>
+                      {status.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
-            ))}
-          </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  select
+                  label="Sort By Total Price"
+                  value={selectedTotalPrice}
+                  onChange={handleTotalPriceChange}
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                >
+                  {totalPriceOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={3}>
+              {filteredOrders.map((order) => (
+                <Grid item key={order.id} xs={12} sm={6} md={4}>
+                  <Grow in={true} timeout={500}>
+                    <div>
+                      {/* Use your CustomerOrderCard component here passing order details */}
+                      <CustomerOrderCard
+                        customerId={customerId}
+                        orderId={order.id}
+                      />
+                    </div>
+                  </Grow>
+                </Grid>
+              ))}
+            </Grid>
+          </div>
         </div>
-      </div>
-    </Slide>
+      </Slide>
+    </Elements>
   );
 };
 

@@ -11,6 +11,8 @@ import {
   Alert,
   Grid,
 } from "@mui/material";
+import { Image } from "cloudinary-react";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const ProductForm = ({ productId, handleEditConfirm }) => {
   const { kitchenId } = useParams();
@@ -43,6 +45,7 @@ const ProductForm = ({ productId, handleEditConfirm }) => {
   const [ingredients, setIngredients] = useState([
     { ingredientQuantity: "", ingredientName: "" },
   ]);
+  const [imageLoading, setImageLoading] = useState(false);
 
   const loadProduct = () => {
     setLoading(true);
@@ -156,6 +159,33 @@ const ProductForm = ({ productId, handleEditConfirm }) => {
     });
   };
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "zq5ndrel");
+    setImageLoading(true);
+
+    // Make a POST request to Cloudinary API for image upload
+    fetch("https://api.cloudinary.com/v1_1/dkw4fjxeg/image/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setProduct((prevProduct) => ({
+          ...prevProduct,
+          imageURL: data.secure_url,
+        }));
+      })
+      .catch((error) => {
+        console.error("Error uploading image to Cloudinary:", error);
+      })
+      .finally(() => {
+        setImageLoading(false);
+      });
+  };
+
   const handleSave = () => {
     setLoading(true);
     const updatedProduct = {
@@ -254,16 +284,50 @@ const ProductForm = ({ productId, handleEditConfirm }) => {
         margin="normal"
         required
       />
-      <TextField
-        variant="outlined"
-        label="Image URL"
-        name="imageURL"
-        value={product.imageURL}
-        onChange={handleChange}
-        fullWidth
-        margin="normal"
-        required
-      />
+      <Grid item xs={12}>
+        {product.imageURL ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "1rem",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              padding: "1rem",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              window.open(product.imageURL, "_blank");
+            }}
+          >
+            <Image
+              cloudName="your_cloud_name"
+              publicId={product.imageURL}
+              width="200"
+              crop="scale"
+            />
+          </div>
+        ) : null}
+
+        <input
+          type="file"
+          id="file-input"
+          style={{ display: "none" }}
+          onChange={handleImageUpload}
+        />
+        <label htmlFor="file-input">
+          <Button
+            variant="contained"
+            component="span"
+            color="primary"
+            startIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            {product.imageURL ? "Change Image" : "Upload Image"}
+          </Button>
+        </label>
+      </Grid>
       <Grid container spacing={2}>
         <Grid item xs={6}>
           <TextField

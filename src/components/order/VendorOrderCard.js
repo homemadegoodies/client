@@ -40,7 +40,7 @@ const useStyles = makeStyles({
       boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)",
       transform: "scale(1.02)",
       transition: "transform 0.3s ease-in-out",
-      cursor: "pointer",
+      // cursor: "pointer",
     },
   },
   media: {
@@ -75,6 +75,7 @@ const VendorOrder = ({ kitchenId, orderId }) => {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [status, setStatus] = useState("Pending");
   const [deliveryDate, setDeliveryDate] = useState(new Date());
+  const [acceptButtonClicked, setAcceptButtonClicked] = useState(false);
   const vendorId = context.id;
   const isVendor = context.isVendor;
 
@@ -194,6 +195,7 @@ const VendorOrder = ({ kitchenId, orderId }) => {
         });
         setOrderUpdated(true);
         setAcceptDialogOpen(false);
+        setAcceptButtonClicked(true);
       })
       .catch((err) => console.log(err));
   };
@@ -312,16 +314,6 @@ const VendorOrder = ({ kitchenId, orderId }) => {
               Delivery Date: {formattedDeliveryDate}
             </Typography>
           )}
-          <br />
-          <Button
-            variant="contained"
-            color="error"
-            disabled={order.status !== "Pending"}
-            onClick={handleRejectOrder}
-            fullWidth
-          >
-            Reject Order
-          </Button>
         </div>
       );
     }
@@ -358,23 +350,38 @@ const VendorOrder = ({ kitchenId, orderId }) => {
             mt: 2,
           }}
         >
-          <Button
-            variant="contained"
-            color="error"
-            disabled={order.status !== "Pending" || orderUpdated}
-            onClick={handleRejectOrder}
-          >
-            Reject Order
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAcceptOrder}
-            sx={{ marginLeft: "auto" }}
-            disabled={order.status !== "Pending"}
-          >
-            Accept Order
-          </Button>
+          {order.status === "Pending" && !orderUpdated && (
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleRejectOrder}
+            >
+              Reject Order
+            </Button>
+          )}
+
+          {order.status === "Pending" && !orderUpdated && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAcceptOrder}
+            >
+              Accept Order
+            </Button>
+          )}
+
+          {/* Render the Update Order button after Accept Order is clicked */}
+          {acceptButtonClicked && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleUpdateOrder}
+              fullWidth
+              sx={{ width: "100%" }} // Set the button to take up full width
+            >
+              Update Order
+            </Button>
+          )}
           <Dialog
             open={acceptDialogOpen}
             onClose={() => {}}
@@ -440,6 +447,7 @@ const VendorOrder = ({ kitchenId, orderId }) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Card
+        className={classes.root}
         sx={{
           opacity: loading ? 0.5 : 1,
           transition: "opacity 1s",

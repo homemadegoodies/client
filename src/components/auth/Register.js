@@ -17,6 +17,7 @@ import {
   Box,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -64,6 +65,7 @@ export default function Register() {
   const [role, setRole] = useState("customer");
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const { loginWithRedirect } = useAuth0();
 
   const [values, setValues] = useState({
     firstName: "",
@@ -188,6 +190,13 @@ export default function Register() {
           .catch((err) => console.log(err));
       }
     }
+  };
+
+  const handleAuth0Register = () => {
+    loginWithRedirect({
+      screen_hint: "signup",
+      login_hint: role,
+    });
   };
 
   // const handleForgetPassword = () => {
@@ -449,6 +458,16 @@ export default function Register() {
                     }
                   >
                     Sign Up
+                  </Button>
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={handleAuth0Register}
+                  >
+                    Register with Auth0
                   </Button>
                 </Grid>
               </Grid>

@@ -44,6 +44,8 @@ export const createAPIEndpoint = (endpoint) => {
         API_URL + `customers/${customerId}/carts/${cartId}/${endpoint}`,
         newRecord
       ),
+    postPaymentIntent: (paymentIntentDTO) =>
+      axios.post(API_URL + "create-payment-intent", paymentIntentDTO),
 
     putProduct: (kitchenId, productId, updatedRecord) =>
       axios.put(

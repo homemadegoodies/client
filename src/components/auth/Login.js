@@ -17,6 +17,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -70,7 +71,7 @@ export default function Login() {
     username: "",
     password: "",
   });
-
+  const { loginWithRedirect } = useAuth0();
   const validate = () => {
     let temp = {};
     temp.username = values.username ? "" : "This field is required.";
@@ -227,6 +228,15 @@ export default function Login() {
                 disabled={values.username === "" || values.password === ""}
               >
                 Login
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                onClick={() => loginWithRedirect()}
+                size="large"
+              >
+                Login with Auth0
               </Button>
             </Grid>
           </Grid>

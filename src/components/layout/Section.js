@@ -1,8 +1,8 @@
 import React from "react";
 import { Grid, Typography, Box } from "@mui/material";
-import SchoolIcon from "@mui/icons-material/School";
 import HubIcon from "@mui/icons-material/Hub";
-import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
+import DinnerDiningIcon from "@mui/icons-material/DinnerDining";
+import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
 import useStyles from "../../hooks/useStyles";
 
 export default function Section() {
@@ -11,21 +11,20 @@ export default function Section() {
   const sectionItems = [
     {
       id: 1,
-      icon: <SchoolIcon sx={{ fontSize: 100 }} color="primary" />,
+      icon: <LocalGroceryStoreIcon sx={{ fontSize: 150 }} color="primary" />,
       sentence:
-        "Digital Fuse is the ultimate platform for Arabic-speaking seniors to learn how to use technology to stay connected and start businesses.",
+        "A digital marketplace for homemade foods that connects home cooks with food lovers",
     },
     {
       id: 2,
-      icon: <HubIcon sx={{ fontSize: 100 }} color="primary" />,
+      icon: <DinnerDiningIcon sx={{ fontSize: 150 }} color="primary" />,
       sentence:
-        "Our web app guides seniors through popular applications like Gmail, YouTube, and WhatsApp, making it easy for them to stay connected and succeed in the digital age.",
+        "Celebrating cherished family recipes, with wholesome and authentic flavors",
     },
     {
       id: 3,
-      icon: <OndemandVideoIcon sx={{ fontSize: 100 }} color="primary" />,
-      sentence:
-        "With step-by-step instructions and video products, Digital Fuse empowers seniors to become tech-savvy. Join us today and start your journey to digital success!",
+      icon: <HubIcon sx={{ fontSize: 150 }} color="primary" />,
+      sentence: "Join us now and embrace the joy of homemade goodness!",
     },
   ];
   return (

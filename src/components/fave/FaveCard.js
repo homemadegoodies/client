@@ -35,7 +35,7 @@ const useStyles = makeStyles({
       boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)",
       transform: "scale(1.02)",
       transition: "transform 0.3s ease-in-out",
-      cursor: "pointer",
+      // cursor: "pointer",
     },
   },
   media: {
@@ -300,6 +300,7 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
 
   return (
     <Card
+      className={classes.root}
       sx={{
         opacity: loading ? 0.5 : 1,
         transition: "opacity 1s",

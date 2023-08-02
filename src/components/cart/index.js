@@ -11,6 +11,12 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(
+  "pk_test_51NVE92IafsfL0hXWGhKEypQr8KlpU5o5ssFHvrrrizmjSLYhPxX8lodNpTVLQtpQj2ikwbcuSA6tkjTIfn1aAtmj009BOYWKqM"
+);
 
 const CartList = () => {
   const [loading, setLoading] = useState(false);
@@ -83,53 +89,55 @@ const CartList = () => {
   }
 
   return (
-    <Slide in={true} direction="left" mountOnEnter unmountOnExit>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <div style={{ width: "90%" }}>
-          <TextField
-            label="Search carts"
-            variant="outlined"
-            value={searchQuery}
-            onChange={handleSearch}
-            fullWidth
-            margin="normal"
-          />
-          <br />
+    <Elements stripe={stripePromise}>
+      <Slide in={true} direction="left" mountOnEnter unmountOnExit>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <div style={{ width: "90%" }}>
+            <TextField
+              label="Search carts"
+              variant="outlined"
+              value={searchQuery}
+              onChange={handleSearch}
+              fullWidth
+              margin="normal"
+            />
+            <br />
 
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                select
-                label="Total Price"
-                value={selectedTotalPrice}
-                onChange={handleTotalPriceChange}
-                variant="outlined"
-                fullWidth
-                margin="normal"
-              >
-                {totalPriceOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-          </Grid>
-
-          <Grid container spacing={3}>
-            {filteredCarts.map((cart) => (
-              <Grid key={cart.id} item xs={12} sm={6} md={4}>
-                <Grow in={true} timeout={1000}>
-                  <div>
-                    <CartCard cartId={cart.id} />
-                  </div>
-                </Grow>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  select
+                  label="Total Price"
+                  value={selectedTotalPrice}
+                  onChange={handleTotalPriceChange}
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                >
+                  {totalPriceOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
-            ))}
-          </Grid>
+            </Grid>
+
+            <Grid container spacing={3}>
+              {filteredCarts.map((cart) => (
+                <Grid key={cart.id} item xs={12} sm={6} md={4}>
+                  <Grow in={true} timeout={1000}>
+                    <div>
+                      <CartCard cartId={cart.id} />
+                    </div>
+                  </Grow>
+                </Grid>
+              ))}
+            </Grid>
+          </div>
         </div>
-      </div>
-    </Slide>
+      </Slide>
+    </Elements>
   );
 };
 
