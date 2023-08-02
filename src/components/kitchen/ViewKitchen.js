@@ -173,7 +173,7 @@ const ViewKitchen = () => {
                 <IconButton onClick={handleAddProductDialogOpen}>
                   <AddIcon
                     sx={{
-                      color: "primary.main",
+                      color: "secondary.main",
                     }}
                   />
                 </IconButton>
@@ -192,7 +192,7 @@ const ViewKitchen = () => {
                 <IconButton onClick={handleEdit}>
                   <EditIcon
                     sx={{
-                      color: "primary.main",
+                      color: "secondary.main",
                     }}
                   />
                 </IconButton>

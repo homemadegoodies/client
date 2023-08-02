@@ -9,6 +9,7 @@ import {
   CardContent,
   CardActions,
   CircularProgress,
+  LinearProgress,
   Box,
   Typography,
   Avatar,
@@ -223,10 +224,6 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
     window.location.reload();
   };
 
-  // const handleQuantityChange = (e) => {
-  //   setSelectedQuantity(e.target.value);
-  // };
-
   const handleAllAddToCart = (e) => {
     if (!isCustomer) {
       navigate("/account");
@@ -277,24 +274,41 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
 
   if (loading) {
     return (
-      <Box
+      <Card
         sx={{
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
-          height: "100%",
+          justifyContent: "center",
+          height: "300px",
+          width: "100%",
+          opacity: 0.5,
+          transition: "opacity 0.5s ease-out",
+          backgroundColor: "transparent",
+          boxShadow: "none",
         }}
       >
         <CircularProgress />
-      </Box>
+      </Card>
     );
   }
 
   if (!fave || faveProducts.length === 0) {
     return (
-      <Alert severity="error" sx={{ marginTop: 2 }} onClose={handleCloseAlert}>
-        No faves yet!
-      </Alert>
+      <Card
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "300px",
+          width: "100%",
+          opacity: 0.5,
+          transition: "opacity 0.5s ease-out",
+          backgroundColor: "transparent",
+          boxShadow: "none",
+        }}
+      >
+        <CircularProgress />
+      </Card>
     );
   }
 
@@ -309,9 +323,7 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
         marginTop: 2,
       }}
     >
-      <CardHeader
-        title={faveKitchen ? faveKitchen.name : <CircularProgress />}
-      />
+      <CardHeader title={faveKitchen ? faveKitchen.name : <LinearProgress />} />
       <Divider />
       <CardContent>
         {faveProducts.map((product) => (

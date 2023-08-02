@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createAPIEndpoint, ENDPOINTS } from "../../api";
 import ProductCard from "./ProductCard";
-import { Grid, Grow, TextField, MenuItem } from "@mui/material";
+import { Grid, Grow, Slide, TextField, MenuItem } from "@mui/material";
 
 const ProductList = ({ kitchenId }) => {
   const [products, setProducts] = useState([]);
@@ -52,70 +52,72 @@ const ProductList = ({ kitchenId }) => {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <div style={{ width: "90%" }}>
-        <TextField
-          label="Search products"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+    <Slide in={true} direction="down" mountOnEnter unmountOnExit>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div style={{ width: "90%" }}>
+          <TextField
+            label="Search products"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              select
-              label="Price"
-              value={selectedPrice}
-              onChange={handlePriceChange}
-              variant="outlined"
-              fullWidth
-              margin="normal"
-            >
-              <MenuItem value="">All</MenuItem>
-              {priceRanges.map((range) => (
-                <MenuItem key={range.value} value={range.value}>
-                  {range.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              select
-              label="Calories"
-              value={selectedCalories}
-              onChange={(e) => setSelectedCalories(e.target.value)}
-              variant="outlined"
-              fullWidth
-              margin="normal"
-            >
-              <MenuItem value="">All</MenuItem>
-              {calorieRanges.map((range) => (
-                <MenuItem key={range.value} value={range.value}>
-                  {range.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-        </Grid>
-        <br />
-
-        <Grid container spacing={3}>
-          {filteredProducts.map((product) => (
-            <Grid item key={product.id} xs={12} sm={6} md={4}>
-              <Grow in={true} timeout={500}>
-                <div>
-                  <ProductCard kitchenId={kitchenId} productId={product.id} />
-                </div>
-              </Grow>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                select
+                label="Price"
+                value={selectedPrice}
+                onChange={handlePriceChange}
+                variant="outlined"
+                fullWidth
+                margin="normal"
+              >
+                <MenuItem value="">All</MenuItem>
+                {priceRanges.map((range) => (
+                  <MenuItem key={range.value} value={range.value}>
+                    {range.label}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
-          ))}
-        </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                select
+                label="Calories"
+                value={selectedCalories}
+                onChange={(e) => setSelectedCalories(e.target.value)}
+                variant="outlined"
+                fullWidth
+                margin="normal"
+              >
+                <MenuItem value="">All</MenuItem>
+                {calorieRanges.map((range) => (
+                  <MenuItem key={range.value} value={range.value}>
+                    {range.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          </Grid>
+          <br />
+
+          <Grid container spacing={3}>
+            {filteredProducts.map((product) => (
+              <Grid item key={product.id} xs={12} sm={6} md={4}>
+                <Grow in={true} timeout={500}>
+                  <div>
+                    <ProductCard kitchenId={kitchenId} productId={product.id} />
+                  </div>
+                </Grow>
+              </Grid>
+            ))}
+          </Grid>
+        </div>
       </div>
-    </div>
+    </Slide>
   );
 };
 

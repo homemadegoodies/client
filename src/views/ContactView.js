@@ -40,8 +40,6 @@ export default function ContactView() {
 
   const submitForm = (e) => {
     e.preventDefault();
-    // console.log({ email, firstName, subject, message });
-
     emailjs
       .sendForm(
         "service_5ujmx8v",
@@ -50,7 +48,6 @@ export default function ContactView() {
         "_ERbwv_HXm2Zj0LFt"
       )
       .then((result) => {
-        // console.log(result.text);
         setIsSent(true);
         setEmail("");
         setFirstName("");

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import useStateContext from "../../hooks/useStateContext";
 import { createAPIEndpoint, ENDPOINTS } from "../../api";
@@ -65,6 +65,7 @@ const ProductCard = ({ kitchenId, productId }) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const { context } = useStateContext();
+  const [loading, setLoading] = useState(false);
   const [kitchen, setKitchen] = useState(null);
   const [product, setProduct] = useState(null);
   const [openProduct, setOpenProduct] = useState(false);
@@ -91,14 +92,17 @@ const ProductCard = ({ kitchenId, productId }) => {
   }, [kitchenId]);
 
   useEffect(() => {
+    setLoading(true);
     createAPIEndpoint(ENDPOINTS.products)
       .fetchProduct(kitchenId.toString(), productId)
       .then((res) => {
         setProduct(res.data);
-        // Update isInFaves once the product is fetched and set
         setIsInFaves(res.data.isInFaves || []);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setTimeout(() => setLoading(false), 500);
+      });
   }, [kitchenId, productId]);
 
   if (isCustomer) {
@@ -240,8 +244,7 @@ const ProductCard = ({ kitchenId, productId }) => {
         ],
       })
       .then((res) => {
-        setIsInCart(true); // Update the state to show the filled cart icon
-        console.log("Product added to cart!");
+        setIsInCart(true);
       })
       .catch((err) => console.log(err));
   };
@@ -285,6 +288,26 @@ const ProductCard = ({ kitchenId, productId }) => {
     >
       <CircularProgress />
     </Card>;
+  }
+
+  if (loading) {
+    return (
+      <Card
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "300px",
+          width: "100%",
+          opacity: 0.5,
+          transition: "opacity 0.5s ease-out",
+          backgroundColor: "transparent",
+          boxShadow: "none",
+        }}
+      >
+        <CircularProgress />
+      </Card>
+    );
   }
 
   if (isDeleted) {
@@ -403,11 +426,12 @@ const ProductCard = ({ kitchenId, productId }) => {
                 label="Quantity"
                 variant="outlined"
                 sx={{
-                  width: "240px",
+                  width: "200px",
                   marginTop: "1rem",
                 }}
                 value={selectedQuantity}
                 onChange={(e) => setSelectedQuantity(e.target.value)}
+                inputProps={{ min: 1, max: 15 }}
               />
 
               {!isVendor && (

@@ -125,7 +125,7 @@ const CartList = () => {
 
             <Grid container spacing={3}>
               {filteredCarts.map((cart) => (
-                <Grid key={cart.id} item xs={12} sm={6} md={4}>
+                <Grid key={cart.id} item xs={12} sm={12} md={6}>
                   <Grow in={true} timeout={1000}>
                     <div>
                       <CartCard cartId={cart.id} />

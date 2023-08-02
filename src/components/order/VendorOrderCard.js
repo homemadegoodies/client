@@ -26,6 +26,7 @@ import {
   FormControl,
   InputLabel,
   TextField,
+  LinearProgress,
 } from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -214,24 +215,41 @@ const VendorOrder = ({ kitchenId, orderId }) => {
 
   if (loading) {
     return (
-      <Box
+      <Card
         sx={{
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
-          height: "100%",
+          justifyContent: "center",
+          height: "300px",
+          width: "100%",
+          opacity: 0.5,
+          transition: "opacity 0.5s ease-out",
+          backgroundColor: "transparent",
+          boxShadow: "none",
         }}
       >
         <CircularProgress />
-      </Box>
+      </Card>
     );
   }
 
   if (!order || orderProducts.length === 0) {
     return (
-      <Alert severity="error" sx={{ marginTop: 2 }} onClose={handleCloseAlert}>
-        No orders yet!
-      </Alert>
+      <Card
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "300px",
+          width: "100%",
+          opacity: 0.5,
+          transition: "opacity 0.5s ease-out",
+          backgroundColor: "transparent",
+          boxShadow: "none",
+        }}
+      >
+        <CircularProgress />
+      </Card>
     );
   }
 
@@ -461,10 +479,10 @@ const VendorOrder = ({ kitchenId, orderId }) => {
             orderCustomer ? (
               orderCustomer.firstName + " " + orderCustomer.lastName
             ) : (
-              <CircularProgress />
+              <LinearProgress />
             )
           }
-          subheader={orderKitchen ? orderKitchen.name : <CircularProgress />}
+          subheader={orderKitchen ? orderKitchen.name : <LinearProgress />}
         />
         <Divider />
         <CardContent>

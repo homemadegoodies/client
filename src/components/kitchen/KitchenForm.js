@@ -55,13 +55,39 @@ const KitchenForm = ({ isEditMode }) => {
         // Check if the kitchen belongs to the logged in vendor
         const isValidCategory =
           fetchedKitchen.category &&
-          ["Italian", "Middle Eastern", "Caribbean"].includes(
-            fetchedKitchen.category
-          );
+          [
+            "Italian",
+            "French",
+            "Spanish",
+            "Greek",
+            "Middle Eastern",
+            "Chinese",
+            "Indian",
+            "Japanese",
+            "Thai",
+            "Vietnamese",
+            "Mexican",
+            "Caribbean",
+            "American",
+            "Canadian",
+            "Vegetarian",
+            "Vegan",
+            "Gluten Free",
+            "Halal",
+            "Kosher",
+            "Dessert",
+            "Other",
+          ].includes(fetchedKitchen.category);
 
         const isValidCity =
           fetchedKitchen.city &&
-          ["Hamilton", "Mississauga", "Toronto"].includes(fetchedKitchen.city);
+          [
+            "Hamilton",
+            "Mississauga",
+            "Toronto",
+            "Calgary",
+            "Vancouver",
+          ].includes(fetchedKitchen.city);
 
         const isValidPrices =
           fetchedKitchen.prices &&
@@ -279,8 +305,18 @@ const KitchenForm = ({ isEditMode }) => {
                       label="Category"
                     >
                       <MenuItem value="Italian">Italian</MenuItem>
+                      <MenuItem value="Greek">Greek</MenuItem>
                       <MenuItem value="Middle Eastern">Middle Eastern</MenuItem>
+                      <MenuItem value="Chinese">Chinese</MenuItem>
+                      <MenuItem value="Indian">Indian</MenuItem>
+                      <MenuItem value="Japanese">Japanese</MenuItem>
+                      <MenuItem value="Korean">Korean</MenuItem>
+                      <MenuItem value="Thai">Thai</MenuItem>
+                      <MenuItem value="Mexican">Mexican</MenuItem>
                       <MenuItem value="Caribbean">Caribbean</MenuItem>
+                      <MenuItem value="American">American</MenuItem>
+                      <MenuItem value="Canadian">Canadian</MenuItem>
+                      <MenuItem value="Other">Other</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>

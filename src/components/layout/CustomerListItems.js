@@ -19,7 +19,6 @@ export default function ViwerListItems() {
     resetContext();
     navigate("/");
   };
-  // console.log(context);
 
   return (
     <React.Fragment>

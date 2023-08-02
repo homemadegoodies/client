@@ -22,20 +22,16 @@ import {
   DialogTitle,
   DialogContentText,
   DialogActions,
+  LinearProgress,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { makeStyles } from "@mui/styles";
-import {
-  CardElement,
-  useStripe,
-  useElements,
-  Elements,
-} from "@stripe/react-stripe-js";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 const useStyles = makeStyles({
   root: {
-    maxWidth: 345,
+    maxWidth: 800,
     transition: "transform 0.2s",
     "&:hover": {
       boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)",
@@ -188,6 +184,14 @@ const CartCard = ({ cartId }) => {
     // Ensure the quantity doesn't go below 1
     productToUpdate.quantity = Math.max(productToUpdate.quantity - 1, 1);
 
+    if (productToUpdate.quantity === 0) {
+      // Remove the product from the cart
+      const updatedCartProducts = cartProducts.filter(
+        (product) => product.productId !== productId
+      );
+      setCartProducts(updatedCartProducts);
+    }
+
     // Call the API method to update the cart
     updateCart();
   };
@@ -215,30 +219,43 @@ const CartCard = ({ cartId }) => {
       .catch((err) => console.log(err));
   };
 
-  const handleCloseAlert = () => {
-    navigate("/kitchens");
-  };
-
   if (loading) {
     return (
-      <Box
+      <Card
         sx={{
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
-          height: "100%",
+          justifyContent: "center",
+          height: "300px",
+          width: "100%",
+          opacity: 0.5,
+          transition: "opacity 0.5s ease-out",
+          backgroundColor: "transparent",
+          boxShadow: "none",
         }}
       >
         <CircularProgress />
-      </Box>
+      </Card>
     );
   }
 
   if (!cart || cartProducts.length === 0) {
     return (
-      <Alert severity="error" sx={{ marginTop: 2 }} onClose={handleCloseAlert}>
-        No carts yet!
-      </Alert>
+      <Card
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "300px",
+          width: "100%",
+          opacity: 0.5,
+          transition: "opacity 0.5s ease-out",
+          backgroundColor: "transparent",
+          boxShadow: "none",
+        }}
+      >
+        <CircularProgress />
+      </Card>
     );
   }
 
@@ -261,8 +278,6 @@ const CartCard = ({ cartId }) => {
       };
       try {
         setLoading(true);
-
-        // Create a payment intent
         createAPIEndpoint(ENDPOINTS.orders)
           .postPaymentIntent({ amount: cart.totalPrice })
           .then((res) => {
@@ -282,9 +297,6 @@ const CartCard = ({ cartId }) => {
                 if (result.error) {
                   console.error(result.error.message);
                 } else {
-                  console.log("Payment successful!", result.paymentIntent);
-
-                  // Create the order on the server
                   createAPIEndpoint(ENDPOINTS.orders)
                     .postOrder(
                       customerId,
@@ -330,11 +342,11 @@ const CartCard = ({ cartId }) => {
           setCartDeleted(true);
         })
         .catch((err) => console.log(err));
-      setConfirmDialogOpen(false); // Close the confirmation dialog
+      setConfirmDialogOpen(false);
     };
 
     const handleCancelDelete = () => {
-      setConfirmDialogOpen(false); // Close the confirmation dialog
+      setConfirmDialogOpen(false);
     };
 
     if (cartDeleted) {
@@ -378,23 +390,33 @@ const CartCard = ({ cartId }) => {
           </Alert>
         ) : (
           <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={handleDeleteCart}
+            <CardActions
+              className={classes.actions}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
             >
-              Delete Cart
-            </Button>
-            {!orderCreated && ( // Show the "Make Order" button only if orderCreated is false
               <Button
                 variant="contained"
-                color="primary"
-                onClick={handleMakeOrder}
+                color="error"
+                onClick={handleDeleteCart}
                 sx={{ marginLeft: "auto" }}
               >
-                Make Order
+                Delete Cart
               </Button>
-            )}
+              {!orderCreated && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleMakeOrder}
+                  sx={{ marginLeft: "auto" }}
+                >
+                  Make Order
+                </Button>
+              )}
+            </CardActions>
             <Dialog
               open={stripeCheckoutOpen}
               onClose={handleStripeCheckoutClose}
@@ -467,46 +489,56 @@ const CartCard = ({ cartId }) => {
       sx={{
         opacity: loading ? 0.5 : 1,
         transition: "opacity 1s",
-        maxWidth: 400,
         margin: "auto",
         marginTop: 2,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
       }}
     >
-      <CardHeader
-        title={cartKitchen ? cartKitchen.name : <CircularProgress />}
-      />
+      <CardHeader title={cartKitchen ? cartKitchen.name : <LinearProgress />} />
       <Divider />
       <CardContent>
         {cartProducts.map((product) => (
           <Box
             key={product.productId}
-            sx={{ display: "flex", alignItems: "center", mb: 2 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              mb: 2,
+            }}
           >
-            <Avatar sx={{ width: 60, height: 60 }}>
-              <CardMedia
-                component="img"
-                image={product.imageURL}
-                alt={product.name}
-                sx={{ width: "100%", height: "100%" }}
-              />
-            </Avatar>
-            <Box sx={{ ml: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                {product.name}
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                Price: ${product.price}
-              </Typography>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Avatar sx={{ width: 80, height: 80 }}>
+                {" "}
+                {/* Increase the size of the avatar */}
+                <CardMedia
+                  component="img"
+                  image={product.imageURL}
+                  alt={product.name}
+                  sx={{ width: "100%", height: "100%", objectFit: "contain" }}
+                />
+              </Avatar>
+              <Box sx={{ ml: 1 }}>
+                <Typography variant="h6" gutterBottom>
+                  {product.name}
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  Price: ${product.price}
+                </Typography>
+              </Box>
             </Box>
             {isCustomer && (
               <CardActions
                 className={classes.actions}
-                sx={{ marginLeft: "auto" }}
+                sx={{ display: "flex", alignItems: "center" }}
               >
                 <IconButton
                   color="primary"
                   aria-label="decrease quantity"
                   onClick={() => handleDecrementQuantity(product.productId)}
+                  // disabled={product.quantity === 1}
                 >
                   <RemoveIcon />
                 </IconButton>
@@ -526,9 +558,9 @@ const CartCard = ({ cartId }) => {
             )}
           </Box>
         ))}
+        <Divider />
       </CardContent>
 
-      <Divider />
       <CardContent>
         <CartTotal cartProducts={cartProducts} />
       </CardContent>

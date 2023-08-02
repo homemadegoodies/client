@@ -97,7 +97,6 @@ export default function Login() {
             setContext(res.data);
             if (res.data.statusCode === 1) {
               navigate("/customer/home");
-              // console.log(res.data);
             } else {
               setShowAlert(true);
             }
@@ -110,7 +109,6 @@ export default function Login() {
             setContext(res.data);
             if (res.data.statusCode === 1) {
               navigate("/vendor/home");
-              // console.log(res.data);
             } else {
               setShowAlert(true);
             }
