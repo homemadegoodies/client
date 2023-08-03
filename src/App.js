@@ -1,6 +1,5 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Auth0Provider } from "@auth0/auth0-react";
 
 // Home routes
 import HomeLayout from "./components/layout/HomeLayout";
@@ -39,80 +38,66 @@ import {
 } from "./components/kitchen/index";
 
 // Product routes
-import AddProduct from "./components/product/ProductForm";
-// import EditProduct from "./components/product/EditProduct";
+import ProductForm from "./components/product/ProductForm";
 // import ViewProduct from "./components/product/ViewProduct";
-
-const AuthProviderConfig = {
-  domain: "dev-7mqbryfl5a6nkwf3.us.auth0.com",
-  clientId: "09uophGjOy7nJNo0IGqrWXn3qnZfnJBU",
-};
 
 function App() {
   return (
-    <Auth0Provider {...AuthProviderConfig}>
-      <BrowserRouter>
-        <Routes>
-          {/* Home routes */}
-          <Route path="/" element={<HomeLayout />}>
-            <Route path="/" element={<HomeView />} />
-            <Route path="/about" element={<AboutView />} />
-            <Route path="/contact" element={<ContactView />} />
-            <Route path="/account" element={<AccountView />} />
-            <Route path="*" element={<NotFoundView />} />
-            <Route path="/kitchens" element={<PublicKitchens />} />
-            <Route path="/kitchens/:kitchenId" element={<PublicKitchen />} />
-          </Route>
+    <BrowserRouter>
+      <Routes>
+        {/* Home routes */}
+        <Route path="/" element={<HomeLayout />}>
+          <Route path="/" element={<HomeView />} />
+          <Route path="/about" element={<AboutView />} />
+          <Route path="/contact" element={<ContactView />} />
+          <Route path="/account" element={<AccountView />} />
+          <Route path="*" element={<NotFoundView />} />
+          <Route path="/kitchens" element={<PublicKitchens />} />
+          <Route path="/kitchens/:kitchenId" element={<PublicKitchen />} />
+        </Route>
 
-          {/* Vendor routes */}
-          <Route path="/vendor" element={<VendorProtectedRoute />}>
-            <Route path="/vendor" element={<VendorLayout />}>
-              <Route path="/vendor/home" element={<VendorHome />} />
-              <Route
-                path="/vendor/kitchens/:kitchenId"
-                element={<VendorKitchen />}
-              />
-              <Route path="/vendor/kitchens/add" element={<AddKitchen />} />
-              <Route
-                path="/vendor/kitchens/edit/:kitchenId"
-                element={<EditKitchen />}
-              />
-              <Route
-                path="/vendor/kitchens/:kitchenId/products/add"
-                element={<AddProduct />}
-              />
-              <Route
-                path="/vendor/:vendorId/orders"
-                element={<VendorOrders />}
-              />
-              <Route
-                path="/vendor/:vendorId/charts"
-                element={<VendorCharts />}
-              />
-              <Route path="/vendor/:vendorId" element={<VendorCard />} />
-            </Route>
+        {/* Vendor routes */}
+        <Route path="/vendor" element={<VendorProtectedRoute />}>
+          <Route path="/vendor" element={<VendorLayout />}>
+            <Route path="/vendor/home" element={<VendorHome />} />
+            <Route
+              path="/vendor/kitchens/:kitchenId"
+              element={<VendorKitchen />}
+            />
+            <Route path="/vendor/kitchens/add" element={<AddKitchen />} />
+            <Route
+              path="/vendor/kitchens/edit/:kitchenId"
+              element={<EditKitchen />}
+            />
+            <Route
+              path="/vendor/kitchens/:kitchenId/products/add"
+              element={<ProductForm />}
+            />
+            <Route path="/vendor/:vendorId/orders" element={<VendorOrders />} />
+            <Route path="/vendor/:vendorId/charts" element={<VendorCharts />} />
+            <Route path="/vendor/:vendorId" element={<VendorCard />} />
           </Route>
+        </Route>
 
-          {/* Customer routes */}
-          <Route path="/customer" element={<CustomerProtectedRoute />}>
-            <Route path="/customer" element={<CustomerLayout />}>
-              <Route path="/customer/home" element={<CustomerHome />} />
-              <Route
-                path="/customer/kitchens/:kitchenId"
-                element={<PublicKitchen />}
-              />
-              <Route
-                path="/customer/:customerId/orders"
-                element={<CustomerOrders />}
-              />
-              <Route path="/customer/:customerId/faves" element={<Faves />} />
-              <Route path="/customer/:customerId/carts" element={<Carts />} />
-              <Route path="/customer/:customerId" element={<CustomerCard />} />
-            </Route>
+        {/* Customer routes */}
+        <Route path="/customer" element={<CustomerProtectedRoute />}>
+          <Route path="/customer" element={<CustomerLayout />}>
+            <Route path="/customer/home" element={<CustomerHome />} />
+            <Route
+              path="/customer/kitchens/:kitchenId"
+              element={<PublicKitchen />}
+            />
+            <Route
+              path="/customer/:customerId/orders"
+              element={<CustomerOrders />}
+            />
+            <Route path="/customer/:customerId/faves" element={<Faves />} />
+            <Route path="/customer/:customerId/carts" element={<Carts />} />
+            <Route path="/customer/:customerId" element={<CustomerCard />} />
           </Route>
-        </Routes>
-      </BrowserRouter>
-    </Auth0Provider>
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

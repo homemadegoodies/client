@@ -9,6 +9,7 @@ import {
   CardContent,
   CardActions,
   CircularProgress,
+  LinearProgress,
   Box,
   Typography,
   Avatar,
@@ -493,7 +494,7 @@ const CustomerOrder = ({ orderId }) => {
       }}
     >
       <CardHeader
-        title={orderKitchen ? orderKitchen.name : <CircularProgress />}
+        title={orderKitchen ? orderKitchen.name : <LinearProgress />}
       />
       <Divider />
       <CardContent>
