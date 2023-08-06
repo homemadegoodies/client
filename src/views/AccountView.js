@@ -16,6 +16,7 @@ import Register from "../components/auth/Register";
 import Login from "../components/auth/Login";
 import useStyles from "../hooks/useStyles";
 import { GoogleLogin } from "react-google-login";
+import jwtDecode from "jwt-decode";
 
 export default function AccountView() {
   const classes = useStyles();
@@ -25,6 +26,7 @@ export default function AccountView() {
   const { context, setContext } = useStateContext();
   const [selectedRole, setSelectedRole] = useState("");
   const [googleIdToken, setGoogleIdToken] = useState("");
+  const [googleResponse, setGoogleResponse] = useState(null);
   const [googleButtonClicked, setGoogleButtonClicked] = useState(false);
 
   const checkIfUserIsCustomer = (email) => {
@@ -54,13 +56,14 @@ export default function AccountView() {
   };
 
   const responseGoogle = (response) => {
+    console.log(response);
     setGoogleIdToken(response.tokenId);
-    setGoogleButtonClicked(true); // Step 2
+    setGoogleButtonClicked(true);
 
-    const email = response.email;
+    const decodedToken = jwtDecode(response.tokenId);
+    const email = decodedToken.email;
 
     if (googleButtonClicked) {
-      // Step 3
       Promise.all([checkIfUserIsCustomer(email), checkIfUserIsVendor(email)])
         .then(([isUserCustomer, isUserVendor]) => {
           if (isUserCustomer || isUserVendor) {
@@ -94,9 +97,16 @@ export default function AccountView() {
 
   const performLogin = () => {
     setOpen(false);
-    const googleUser = {
-      GoogleIdToken: googleIdToken,
-      selectedRole: selectedRole,
+
+    const decodedCredential = jwtDecode(googleResponse.credential);
+
+    const userData = {
+      email: decodedCredential.email,
+      firstName: decodedCredential.given_name,
+      lastName: decodedCredential.family_name,
+      googleIdToken: googleIdToken,
+      profilePicture: decodedCredential.picture,
+      role: selectedRole,
     };
 
     const endpoint =
@@ -106,7 +116,7 @@ export default function AccountView() {
 
     // Perform the login API call based on the selected role
     createAPIEndpoint(endpoint)
-      .post(googleUser)
+      .post(userData)
       .then((res) => {
         if (res.data.statusCode === 1) {
           // Update the context based on the selected role
@@ -130,6 +140,8 @@ export default function AccountView() {
         }
       })
       .catch((err) => console.log(err));
+
+    handleRoleSelection(selectedRole);
   };
 
   return (
