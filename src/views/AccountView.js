@@ -55,56 +55,28 @@ export default function AccountView() {
       });
   };
 
-  const responseGoogle = (response) => {
-    setGoogleIdToken(response.credential);
-    const decodedCredential = jwtDecode(response.credential);
-    setGoogleResponse(decodedCredential);
-    setGoogleButtonClicked(true);
+  const responseGoogle = async (response) => {
+    try {
+      setGoogleIdToken(response.credential);
+      const decodedCredential = jwtDecode(response.credential);
+      setGoogleResponse(decodedCredential);
 
-    const email = decodedCredential.email;
+      const email = decodedCredential.email;
+      const isCustomer = await checkIfUserIsCustomer(email);
+      const isVendor = await checkIfUserIsVendor(email);
 
-    if (googleButtonClicked) {
-      checkIfUserIsCustomer(email).then((isCustomer) => {
-        if (isCustomer) {
-          createAPIEndpoint(ENDPOINTS.loginGoogleCustomer)
-            .fetchAll()
-            .then((res) => {
-              if (res.data.statusCode === 1) {
-                setContext({
-                  ...context,
-                  customer: res.data.result,
-                  isCustomerLoggedIn: true,
-                });
-                navigate("/customer/home");
-              } else {
-                setMessage(res.data.message);
-              }
-            })
-            .catch((err) => console.log(err));
-        } else {
-          checkIfUserIsVendor(email).then((isVendor) => {
-            if (isVendor) {
-              createAPIEndpoint(ENDPOINTS.loginGoogleVendor)
-                .fetchAll()
-                .then((res) => {
-                  if (res.data.statusCode === 1) {
-                    setContext({
-                      ...context,
-                      vendor: res.data.result,
-                      isVendorLoggedIn: true,
-                    });
-                    navigate("/vendor/home");
-                  } else {
-                    setMessage(res.data.message);
-                  }
-                })
-                .catch((err) => console.log(err));
-            } else {
-              setOpen(true);
-            }
-          });
-        }
-      });
+      if (isCustomer) {
+        await performGoogleLogin(ENDPOINTS.loginGoogleCustomer);
+        navigate("/customer/home");
+      } else if (isVendor) {
+        await performGoogleLogin(ENDPOINTS.loginGoogleVendor);
+        navigate("/vendor/home");
+      } else {
+        setOpen(true);
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      setMessage("Error during Google login.");
     }
   };
 
@@ -112,10 +84,10 @@ export default function AccountView() {
     setSelectedRole(role);
   };
 
-  const performLogin = (role) => {
+  const performGoogleLogin = async (endpoint) => {
     setOpen(false);
 
-    // handleRoleSelection(selectedRole);
+    handleRoleSelection(selectedRole);
 
     const googleUser = {
       email: googleResponse.email,
@@ -127,38 +99,24 @@ export default function AccountView() {
       role: selectedRole,
     };
 
-    if (role === "customer") {
-      createAPIEndpoint(ENDPOINTS.loginGoogleCustomer)
-        .post(googleUser)
-        .then((res) => {
-          if (res.data.statusCode === 1) {
-            setContext({
-              ...context,
-              customer: res.data.result,
-              isCustomerLoggedIn: true,
-            });
-            navigate("/customer/home");
-          } else {
-            setMessage(res.data.message);
-          }
-        })
-        .catch((err) => console.log(err));
-    } else if (role === "vendor") {
-      createAPIEndpoint(ENDPOINTS.loginGoogleVendor)
-        .post(googleUser)
-        .then((res) => {
-          setContext({
-            ...context,
-            vendor: res.data.result,
-            isVendorLoggedIn: true,
-          });
-          if (res.data.statusCode === 1) {
-            navigate("/vendor/home");
-          } else {
-            setMessage(res.data.message);
-          }
-        })
-        .catch((err) => console.log(err));
+    try {
+      const res = await createAPIEndpoint(endpoint).post(googleUser);
+      if (res.data.statusCode === 1) {
+        const roleKey =
+          endpoint === ENDPOINTS.loginGoogleCustomer ? "customer" : "vendor";
+        setContext({
+          ...context,
+          [roleKey]: res.data.result,
+          [`is${
+            roleKey.charAt(0).toUpperCase() + roleKey.slice(1)
+          }LoggedIn`]: true,
+        });
+      } else {
+        setMessage(res.data.message);
+      }
+    } catch (error) {
+      console.error("Google login API error:", error);
+      setMessage("Error during Google login.");
     }
   };
 
@@ -189,8 +147,16 @@ export default function AccountView() {
             Please select the role you want to log in as.
           </DialogContentText>
           <DialogActions>
-            <Button onClick={() => performLogin("customer")}>Customer</Button>
-            <Button onClick={() => performLogin("vendor")}>Vendor</Button>
+            <Button
+              onClick={() => performGoogleLogin(ENDPOINTS.loginGoogleCustomer)}
+            >
+              Customer
+            </Button>
+            <Button
+              onClick={() => performGoogleLogin(ENDPOINTS.loginGoogleVendor)}
+            >
+              Vendor
+            </Button>
           </DialogActions>
         </DialogContent>
       </Dialog>
