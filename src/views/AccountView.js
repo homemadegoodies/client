@@ -15,7 +15,7 @@ import {
 import Register from "../components/auth/Register";
 import Login from "../components/auth/Login";
 import useStyles from "../hooks/useStyles";
-import { GoogleLogin } from "react-google-login";
+import { GoogleLogin } from "@react-oauth/google";
 import jwtDecode from "jwt-decode";
 
 export default function AccountView() {
@@ -56,38 +56,55 @@ export default function AccountView() {
   };
 
   const responseGoogle = (response) => {
-    console.log(response);
-    setGoogleIdToken(response.tokenId);
+    setGoogleIdToken(response.credential);
+    const decodedCredential = jwtDecode(response.credential);
+    setGoogleResponse(decodedCredential);
     setGoogleButtonClicked(true);
 
-    const decodedToken = jwtDecode(response.tokenId);
-    const email = decodedToken.email;
+    const email = decodedCredential.email;
 
     if (googleButtonClicked) {
-      Promise.all([checkIfUserIsCustomer(email), checkIfUserIsVendor(email)])
-        .then(([isUserCustomer, isUserVendor]) => {
-          if (isUserCustomer || isUserVendor) {
-            if (isUserCustomer) {
-              setContext({
-                ...context,
-                isCustomerLoggedIn: true,
-              });
-              navigate("/customer/home");
+      checkIfUserIsCustomer(email).then((isCustomer) => {
+        if (isCustomer) {
+          createAPIEndpoint(ENDPOINTS.loginGoogleCustomer)
+            .fetchAll()
+            .then((res) => {
+              if (res.data.statusCode === 1) {
+                setContext({
+                  ...context,
+                  customer: res.data.result,
+                  isCustomerLoggedIn: true,
+                });
+                navigate("/customer/home");
+              } else {
+                setMessage(res.data.message);
+              }
+            })
+            .catch((err) => console.log(err));
+        } else {
+          checkIfUserIsVendor(email).then((isVendor) => {
+            if (isVendor) {
+              createAPIEndpoint(ENDPOINTS.loginGoogleVendor)
+                .fetchAll()
+                .then((res) => {
+                  if (res.data.statusCode === 1) {
+                    setContext({
+                      ...context,
+                      vendor: res.data.result,
+                      isVendorLoggedIn: true,
+                    });
+                    navigate("/vendor/home");
+                  } else {
+                    setMessage(res.data.message);
+                  }
+                })
+                .catch((err) => console.log(err));
             } else {
-              setContext({
-                ...context,
-                isVendorLoggedIn: true,
-              });
-              navigate("/vendor/home");
+              setOpen(true);
             }
-          } else {
-            setSelectedRole("");
-            setOpen(true);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+          });
+        }
+      });
     }
   };
 
@@ -95,53 +112,54 @@ export default function AccountView() {
     setSelectedRole(role);
   };
 
-  const performLogin = () => {
+  const performLogin = (role) => {
     setOpen(false);
 
-    const decodedCredential = jwtDecode(googleResponse.credential);
+    // handleRoleSelection(selectedRole);
 
-    const userData = {
-      email: decodedCredential.email,
-      firstName: decodedCredential.given_name,
-      lastName: decodedCredential.family_name,
+    const googleUser = {
+      email: googleResponse.email,
+      username: googleResponse.email.split("@")[0],
+      firstName: googleResponse.given_name,
+      lastName: googleResponse.family_name,
       googleIdToken: googleIdToken,
-      profilePicture: decodedCredential.picture,
+      profilePicture: googleResponse.picture,
       role: selectedRole,
     };
 
-    const endpoint =
-      selectedRole === "customer"
-        ? ENDPOINTS.loginGoogleCustomer
-        : ENDPOINTS.loginGoogleVendor;
-
-    // Perform the login API call based on the selected role
-    createAPIEndpoint(endpoint)
-      .post(userData)
-      .then((res) => {
-        if (res.data.statusCode === 1) {
-          // Update the context based on the selected role
-          if (selectedRole === "customer") {
+    if (role === "customer") {
+      createAPIEndpoint(ENDPOINTS.loginGoogleCustomer)
+        .post(googleUser)
+        .then((res) => {
+          if (res.data.statusCode === 1) {
             setContext({
               ...context,
               customer: res.data.result,
               isCustomerLoggedIn: true,
             });
             navigate("/customer/home");
-          } else if (selectedRole === "vendor") {
-            setContext({
-              ...context,
-              vendor: res.data.result,
-              isVendorLoggedIn: true,
-            });
-            navigate("/vendor/home");
+          } else {
+            setMessage(res.data.message);
           }
-        } else {
-          setMessage(res.data.message);
-        }
-      })
-      .catch((err) => console.log(err));
-
-    handleRoleSelection(selectedRole);
+        })
+        .catch((err) => console.log(err));
+    } else if (role === "vendor") {
+      createAPIEndpoint(ENDPOINTS.loginGoogleVendor)
+        .post(googleUser)
+        .then((res) => {
+          setContext({
+            ...context,
+            vendor: res.data.result,
+            isVendorLoggedIn: true,
+          });
+          if (res.data.statusCode === 1) {
+            navigate("/vendor/home");
+          } else {
+            setMessage(res.data.message);
+          }
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   return (
@@ -156,12 +174,7 @@ export default function AccountView() {
       </Typography>
 
       <Stack sx={{ p: 2 }} direction="row" spacing={2} justifyContent="center">
-        <GoogleLogin
-          clientId="501127864045-ft33hrmuga70sircjvcemeu2g85g55no.apps.googleusercontent.com"
-          onSuccess={responseGoogle}
-          onFailure={responseGoogle}
-          buttonText="Login with Google"
-        />
+        <GoogleLogin onSuccess={responseGoogle} onFailure={responseGoogle} />
       </Stack>
 
       <Stack sx={{ p: 2 }} direction="row" spacing={2} justifyContent="center">

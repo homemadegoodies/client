@@ -1,9 +1,9 @@
 import axios from "axios";
 
 let API_URL = "https://homemadegoodies.onrender.com/api/";
-// if (window.location.hostname === "localhost") {
-//   API_URL = "https://localhost:7243/api/";
-// }
+if (window.location.hostname === "localhost") {
+  API_URL = "https://localhost:7243/api/";
+}
 
 export const createAPIEndpoint = (endpoint) => {
   let baseURL = API_URL + endpoint + "/";
