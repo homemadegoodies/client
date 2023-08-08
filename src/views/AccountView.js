@@ -33,8 +33,8 @@ export default function AccountView() {
     return createAPIEndpoint(ENDPOINTS.customers)
       .fetchAll()
       .then((res) => {
-        const customerData = res.data.result;
-        return customerData && customerData.some((c) => c.email === email);
+        const filteredData = res.data.filter((c) => c.email === email);
+        return filteredData.length > 0;
       })
       .catch((err) => {
         console.log(err);
@@ -46,8 +46,8 @@ export default function AccountView() {
     return createAPIEndpoint(ENDPOINTS.vendors)
       .fetchAll()
       .then((res) => {
-        const vendorData = res.data.result;
-        return vendorData && vendorData.some((v) => v.email === email);
+        const filteredData = res.data.filter((v) => v.email === email);
+        return filteredData.length > 0;
       })
       .catch((err) => {
         console.log(err);
@@ -66,10 +66,32 @@ export default function AccountView() {
       const isVendor = await checkIfUserIsVendor(email);
 
       if (isCustomer) {
-        await performGoogleLogin(ENDPOINTS.loginGoogleCustomer);
+        handleRoleSelection("customer");
+        const res = await createAPIEndpoint(ENDPOINTS.loginGoogleCustomer).post(
+          {
+            email: decodedCredential.email,
+            username: decodedCredential.email.split("@")[0],
+            firstName: decodedCredential.given_name,
+            lastName: decodedCredential.family_name,
+            googleIdToken: response.credential,
+            profilePicture: decodedCredential.picture,
+            role: "customer",
+          }
+        );
+        setContext(res.data);
         navigate("/customer/home");
       } else if (isVendor) {
-        await performGoogleLogin(ENDPOINTS.loginGoogleVendor);
+        handleRoleSelection("vendor");
+        const res = await createAPIEndpoint(ENDPOINTS.loginGoogleVendor).post({
+          email: decodedCredential.email,
+          username: decodedCredential.email.split("@")[0],
+          firstName: decodedCredential.given_name,
+          lastName: decodedCredential.family_name,
+          googleIdToken: response.credential,
+          profilePicture: decodedCredential.picture,
+          role: "vendor",
+        });
+        setContext(res.data);
         navigate("/vendor/home");
       } else {
         setOpen(true);
@@ -104,14 +126,7 @@ export default function AccountView() {
       if (res.data.statusCode === 1) {
         const roleKey =
           endpoint === ENDPOINTS.loginGoogleCustomer ? "customer" : "vendor";
-        setContext({
-          ...context,
-          [roleKey]: res.data.result,
-          [`is${
-            roleKey.charAt(0).toUpperCase() + roleKey.slice(1)
-          }LoggedIn`]: true,
-        });
-        // navigate to either customer or vendor home page
+        setContext(res.data);
         navigate(`/${roleKey}/home`);
       } else {
         setMessage(res.data.message);
