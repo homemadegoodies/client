@@ -111,6 +111,8 @@ export default function AccountView() {
             roleKey.charAt(0).toUpperCase() + roleKey.slice(1)
           }LoggedIn`]: true,
         });
+        // navigate to either customer or vendor home page
+        navigate(`/${roleKey}/home`);
       } else {
         setMessage(res.data.message);
       }
