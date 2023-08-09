@@ -88,6 +88,10 @@ function App() {
                 element={<VendorCharts />}
               />
               <Route path="/vendor/:vendorId" element={<VendorCard />} />
+              <Route
+                path="/vendor/:vendorId/customer/:customerId"
+                element={<CustomerCard />}
+              />
             </Route>
           </Route>
 
@@ -106,6 +110,10 @@ function App() {
               <Route path="/customer/:customerId/faves" element={<Faves />} />
               <Route path="/customer/:customerId/carts" element={<Carts />} />
               <Route path="/customer/:customerId" element={<CustomerCard />} />
+              <Route
+                path="/customer/:customerId/vendor/:vendorId"
+                element={<VendorCard />}
+              />
             </Route>
           </Route>
         </Routes>

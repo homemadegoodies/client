@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 import { createAPIEndpoint, ENDPOINTS } from "../../api";
 import useStateContext from "../../hooks/useStateContext";
 import {
@@ -388,14 +389,13 @@ const VendorOrder = ({ kitchenId, orderId }) => {
             </Button>
           )}
 
-          {/* Render the Update Order button after Accept Order is clicked */}
           {acceptButtonClicked && (
             <Button
               variant="contained"
               color="primary"
               onClick={handleUpdateOrder}
               fullWidth
-              sx={{ width: "100%" }} // Set the button to take up full width
+              sx={{ width: "100%" }}
             >
               Update Order
             </Button>
@@ -477,13 +477,25 @@ const VendorOrder = ({ kitchenId, orderId }) => {
         <CardHeader
           title={
             orderCustomer ? (
-              orderCustomer.firstName + " " + orderCustomer.lastName
+              <Link
+                to={`/vendor/${context.id}/customer/${orderCustomer.id}`}
+                style={{
+                  color: "inherit",
+                  textDecoration: "none",
+                  "&:hover": {
+                    textDecoration: "inherit",
+                  },
+                }}
+              >
+                {orderCustomer.firstName + " " + orderCustomer.lastName}
+              </Link>
             ) : (
               <LinearProgress />
             )
           }
           subheader={orderKitchen ? orderKitchen.name : <LinearProgress />}
         />
+
         <Divider />
         <CardContent>
           {orderProducts.map((product) => (

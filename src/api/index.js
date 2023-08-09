@@ -46,6 +46,10 @@ export const createAPIEndpoint = (endpoint) => {
       ),
     postPaymentIntent: (paymentIntentDTO) =>
       axios.post(API_URL + "create-payment-intent", paymentIntentDTO),
+    postCustomerReport: (customerId, vendorId, newRecord) =>
+      axios.post(API_URL + `customers/${customerId}/${endpoint}`, newRecord),
+    postVendorReport: (vendorId, newRecord) =>
+      axios.post(API_URL + `vendors/${vendorId}/${endpoint}`, newRecord),
 
     putProduct: (kitchenId, productId, updatedRecord) =>
       axios.put(
@@ -124,4 +128,9 @@ export const ENDPOINTS = {
   addOrder: "orders/add",
   viewOrder: "orders/:orderId",
   editOrder: "orders/edit",
+
+  reports: "reports",
+  viewReport: "reports/:reportId",
+  editReport: "reports/edit",
+  deleteReport: "reports/delete",
 };
