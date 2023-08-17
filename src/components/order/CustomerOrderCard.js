@@ -237,8 +237,6 @@ const CustomerOrder = ({ orderId }) => {
         cartId: cart.id,
       };
 
-      console.log(order.totalPrice);
-
       try {
         setLoading(true);
 
