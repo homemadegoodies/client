@@ -9,6 +9,7 @@ import AccountView from "./views/AccountView";
 import AboutView from "./views/AboutView";
 import ContactView from "./views/ContactView";
 import NotFoundView from "./views/NotFoundView";
+import ForgotPassword from "./components/auth/ForgotPassword";
 
 // Vendor routes
 import { VendorProtectedRoute } from "./components/auth/VendorProtectedRoute";
@@ -57,6 +58,7 @@ function App() {
             <Route path="/about" element={<AboutView />} />
             <Route path="/contact" element={<ContactView />} />
             <Route path="/account" element={<AccountView />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="*" element={<NotFoundView />} />
             <Route path="/kitchens" element={<PublicKitchens />} />
             <Route path="/kitchens/:kitchenId" element={<PublicKitchen />} />

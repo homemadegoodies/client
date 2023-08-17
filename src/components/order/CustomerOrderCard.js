@@ -240,14 +240,12 @@ const CustomerOrder = ({ orderId }) => {
       try {
         setLoading(true);
 
-        // Create a payment intent
         createAPIEndpoint(ENDPOINTS.orders)
           .postPaymentIntent({ amount: order.totalPrice })
           .then((res) => {
             const clientSecret = res.data.clientSecret;
             const paymentIntentId = res.data.paymentIntentId;
 
-            // Confirm the card payment using Stripe
             stripe
               .confirmCardPayment(clientSecret, {
                 payment_method: {
@@ -350,16 +348,6 @@ const CustomerOrder = ({ orderId }) => {
           >
             Order Status: {order.status}
           </Typography>
-          <br />
-          <Button
-            variant="contained"
-            color="error"
-            disabled={order.status !== "Pending"}
-            onClick={handleCancelOrder}
-            fullWidth
-          >
-            Cancel Order
-          </Button>
         </div>
       );
     }

@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogContent,
   MenuItem,
+  Link,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -125,9 +126,9 @@ export default function Login() {
     validate({ [name]: value });
   };
 
-  // const handleForgetPassword = () => {
-  //   navigate("/forget-password");
-  // };
+  const handleForgetPassword = () => {
+    navigate("/forgot-password");
+  };
 
   const handleCloseAlert = () => {
     setShowAlert(false);
@@ -225,6 +226,15 @@ export default function Login() {
               >
                 Login
               </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Link
+                component="button"
+                variant="body2"
+                onClick={handleForgetPassword}
+              >
+                Forgot your password?
+              </Link>
             </Grid>
           </Grid>
         </DialogContent>

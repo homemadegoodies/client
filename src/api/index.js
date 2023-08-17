@@ -91,6 +91,8 @@ export const ENDPOINTS = {
   viewVendor: "vendors/:vendorId",
   editVendor: "vendors/edit",
   deleteVendor: "vendors/delete",
+  forgotVendorPassword: "vendors/forgot-password",
+  resetVendorPassword: "vendors/reset-password",
 
   customers: "customers",
   registerCustomer: "customers/register",
@@ -99,6 +101,8 @@ export const ENDPOINTS = {
   viewCustomer: "customers/:customerId",
   editCustomer: "customers/edit",
   deleteCustomer: "customers/delete",
+  forgotCustomerPassword: "customers/forgot-password",
+  resetCustomerPassword: "customers/reset-password",
 
   kitchens: "kitchens",
   addKitchen: "kitchens/add",
