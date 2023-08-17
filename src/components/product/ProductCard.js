@@ -436,6 +436,7 @@ const ProductCard = ({ kitchenId, productId }) => {
                     onChange={(e) => setSelectedQuantity(e.target.value)}
                     inputProps={{ min: 1, max: 15 }}
                   />
+                  <br />
                   <Button
                     variant="contained"
                     color="primary"
