@@ -164,11 +164,8 @@ const CartCard = ({ cartId }) => {
       return;
     }
 
-    // Update the quantity of the product
-    productToUpdate.quantity += 1;
-
-    // Call the API method to update the cart
-    updateCart();
+    productToUpdate.quantity += 1; // Update the quantity of the product
+    updateCart(); // Call the API method to update the cart
   };
 
   const handleDecrementQuantity = (productId) => {
@@ -192,8 +189,7 @@ const CartCard = ({ cartId }) => {
       setCartProducts(updatedCartProducts);
     }
 
-    // Call the API method to update the cart
-    updateCart();
+    updateCart(); // Call the API method to update the cart
   };
 
   const updateCart = () => {

@@ -190,10 +190,6 @@ export default function Register() {
     }
   };
 
-  // const handleForgetPassword = () => {
-  //   navigate("/forget-password");
-  // };
-
   const handleCloseAlert = () => {
     setShowAlert(false);
   };
