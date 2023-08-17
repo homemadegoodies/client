@@ -15,6 +15,7 @@ const getFreshContext = () => {
         city: "",
         province: "",
         postalCode: "",
+        profilePicture: "",
       })
     );
   return JSON.parse(localStorage.getItem("context"));

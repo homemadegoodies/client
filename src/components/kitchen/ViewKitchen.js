@@ -190,7 +190,7 @@ const ViewKitchen = () => {
                   open={openAddProductDialog}
                   onClose={handleAddProductDialogClose}
                 >
-                  <DialogTitle>Edit Product</DialogTitle>
+                  <DialogTitle>Add a Product</DialogTitle>
                   <DialogContent>
                     <ProductForm kitchenId={kitchenId} />
                   </DialogContent>

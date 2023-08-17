@@ -83,8 +83,18 @@ const KitchenList = () => {
               >
                 <MenuItem value="">All</MenuItem>
                 <MenuItem value="Italian">Italian</MenuItem>
+                <MenuItem value="Greek">Greek</MenuItem>
                 <MenuItem value="Middle Eastern">Middle Eastern</MenuItem>
+                <MenuItem value="Chinese">Chinese</MenuItem>
+                <MenuItem value="Indian">Indian</MenuItem>
+                <MenuItem value="Japanese">Japanese</MenuItem>
+                <MenuItem value="Korean">Korean</MenuItem>
+                <MenuItem value="Thai">Thai</MenuItem>
+                <MenuItem value="Mexican">Mexican</MenuItem>
                 <MenuItem value="Caribbean">Caribbean</MenuItem>
+                <MenuItem value="American">American</MenuItem>
+                <MenuItem value="Canadian">Canadian</MenuItem>
+                <MenuItem value="Other">Other</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} sm={4}>

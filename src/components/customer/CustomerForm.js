@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, FormControl, Grid, MenuItem } from "@mui/material";
+import { Image } from "cloudinary-react";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 export default function CustomerForm({
   customerData,
@@ -18,6 +20,9 @@ export default function CustomerForm({
     province: customerData.province || "ON",
     postalCode: customerData.postalCode || "",
   });
+  const [profilePicture, setProfilePicture] = useState(
+    customerData.profilePicture || null
+  );
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -43,6 +48,28 @@ export default function CustomerForm({
     }));
   };
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "zq5ndrel");
+    fetch("https://api.cloudinary.com/v1_1/dkw4fjxeg/image/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setProfilePicture(data.secure_url);
+        setFormData((prevData) => ({
+          ...prevData,
+          profilePicture: data.secure_url,
+        }));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   const handleSubmit = () => {
     onSave(formData);
   };
@@ -65,6 +92,7 @@ export default function CustomerForm({
             value={formData.firstName}
             onChange={handleChange}
             fullWidth
+            required
           />
         </Grid>
         <Grid item xs={12}>
@@ -74,6 +102,7 @@ export default function CustomerForm({
             value={formData.lastName}
             onChange={handleChange}
             fullWidth
+            required
           />
         </Grid>
         <Grid item xs={12}>
@@ -83,6 +112,7 @@ export default function CustomerForm({
             value={formData.username}
             onChange={handleChange}
             fullWidth
+            required
           />
         </Grid>
         <Grid item xs={12}>
@@ -92,7 +122,54 @@ export default function CustomerForm({
             value={formData.email}
             onChange={handleChange}
             fullWidth
+            required
           />
+        </Grid>
+        <Grid item xs={12}>
+          {profilePicture ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "1rem",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                padding: "1rem",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                window.open(profilePicture, "_blank");
+              }}
+            >
+              <Image
+                cloudName="dkw4fjxeg"
+                publicId={profilePicture}
+                width="200"
+                crop="scale"
+              />
+            </div>
+          ) : null}
+
+          <input
+            type="file"
+            id="file-input"
+            style={{ display: "none" }}
+            onChange={handleImageUpload}
+          />
+          <label htmlFor="file-input">
+            <Button
+              variant="contained"
+              component="span"
+              color="primary"
+              startIcon={<CloudUploadIcon />}
+              fullWidth
+            >
+              {profilePicture
+                ? "Change Profile Picture"
+                : "Upload Profile Picture"}
+            </Button>
+          </label>
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -101,6 +178,7 @@ export default function CustomerForm({
             value={formData.phoneNumber}
             onChange={handleChange}
             fullWidth
+            required
           />
         </Grid>
         <Grid item xs={12}>
@@ -110,6 +188,7 @@ export default function CustomerForm({
             value={formData.address}
             onChange={handleChange}
             fullWidth
+            required
           />
         </Grid>
         <Grid item xs={12}>
@@ -119,6 +198,7 @@ export default function CustomerForm({
             value={formData.postalCode}
             onChange={handleChange}
             fullWidth
+            required
           />
         </Grid>
         <Grid item xs={6}>
@@ -165,8 +245,23 @@ export default function CustomerForm({
           <Button variant="outlined" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleSubmit}>
-            Save
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            disabled={
+              !formData.firstName ||
+              !formData.lastName ||
+              !formData.username ||
+              !formData.email ||
+              !profilePicture ||
+              !formData.phoneNumber ||
+              !formData.address ||
+              !formData.postalCode ||
+              !formData.city ||
+              !formData.province
+            }
+          >
+            Update
           </Button>
         </Grid>
       </Grid>

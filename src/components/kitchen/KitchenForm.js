@@ -268,7 +268,7 @@ const KitchenForm = ({ isEditMode }) => {
                       }}
                     >
                       <Image
-                        cloudName="your_cloud_name"
+                        cloudName="dkw4fjxeg"
                         publicId={kitchen.imageURL}
                         width="200"
                         crop="scale"
@@ -363,7 +363,9 @@ const KitchenForm = ({ isEditMode }) => {
                       !kitchen.category ||
                       !kitchen.city ||
                       !kitchen.prices ||
-                      imageLoading
+                      !kitchen.imageURL ||
+                      imageLoading ||
+                      (isEditMode && !kitchen.imageURL)
                     }
                   >
                     {isEditMode ? "Update" : "Save"}

@@ -195,7 +195,7 @@ const ProductForm = ({ productId, handleEditConfirm }) => {
         (ingredient) =>
           ingredient.ingredientQuantity.trim() !== "" ||
           ingredient.ingredientName.trim() !== ""
-      ), // Remove empty ingredients
+      ),
     };
 
     if (productId) {
@@ -226,8 +226,7 @@ const ProductForm = ({ productId, handleEditConfirm }) => {
           });
           setLoading(false);
           setOpen(false);
-          // Update the product state in the parent component
-          handleModelUpdate(res.data);
+          handleModelUpdate(res.data); // Update the product state in the parent component
         })
         .catch((err) => {
           setAlert({
@@ -302,7 +301,7 @@ const ProductForm = ({ productId, handleEditConfirm }) => {
             }}
           >
             <Image
-              cloudName="your_cloud_name"
+              cloudName="dkw4fjxeg"
               publicId={product.imageURL}
               width="200"
               crop="scale"
@@ -375,7 +374,6 @@ const ProductForm = ({ productId, handleEditConfirm }) => {
       <Dialog open={open} onClose={handleCloseDialog}>
         <DialogTitle>Add Ingredients and Recipe</DialogTitle>
         <DialogContent>
-          {/* Show the list of ingredients */}
           {ingredients.map((ingredient, index) => (
             <div key={index}>
               <TextField
@@ -415,7 +413,6 @@ const ProductForm = ({ productId, handleEditConfirm }) => {
             </Button>
           </div>
 
-          {/* Show the list of recipe steps */}
           {product.recipe.map((step, index) => (
             <div key={index}>
               <TextField
@@ -439,7 +436,6 @@ const ProductForm = ({ productId, handleEditConfirm }) => {
             </div>
           ))}
 
-          {/* Button to add a new recipe step */}
           <div style={{ marginTop: "1rem", textAlign: "right" }}>
             <Button
               variant="outlined"

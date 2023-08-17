@@ -30,8 +30,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function CustomerCard() {
-  const { vendorId } = useParams();
   const { customerId } = useParams();
+  const { vendorId } = useParams();
   const navigate = useNavigate();
   const { context, setContext } = useStateContext();
   const [loading, setLoading] = useState(false);
@@ -54,15 +54,27 @@ export default function CustomerCard() {
   useEffect(() => {
     setLoading(true);
     fetchCustomer();
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+    setLoading(false);
   }, []);
 
   if (loading) {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+    return (
+      <Card
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "300px",
+          width: "100%",
+          opacity: 0.5,
+          transition: "opacity 0.5s ease-out",
+          backgroundColor: "transparent",
+          boxShadow: "none",
+        }}
+      >
+        <CircularProgress />
+      </Card>
+    );
   }
 
   const handleEdit = () => {
@@ -85,10 +97,17 @@ export default function CustomerCard() {
     createAPIEndpoint(ENDPOINTS.customers)
       .put(customerId, updatedData)
       .then((res) => {
-        console.log(res);
         setOpenEditDialog(false);
-        setContext({ ...context, ...updatedData });
-      });
+        setCustomer({
+          ...customer,
+          ...updatedData,
+        });
+        setContext({
+          ...context,
+          ...updatedData,
+        });
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -115,18 +134,6 @@ export default function CustomerCard() {
             }}
           >
             <CardContent>
-              {loading && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <CircularProgress />
-                </Box>
-              )}
               {!loading && (
                 <Box>
                   {context.id === customerId && (
@@ -145,7 +152,7 @@ export default function CustomerCard() {
                           <CustomerForm
                             handleEditCancel={handleEditCancel}
                             customerId={customerId}
-                            customerData={context}
+                            customerData={customer}
                             onSave={(updatedData) => {
                               handleSave(updatedData);
                               setOpenEditDialog(false);
@@ -237,6 +244,7 @@ export default function CustomerCard() {
                             name="reason"
                             value={reportReason}
                             onChange={(e) => setReportReason(e.target.value)}
+                            autoFocus
                           />
                         </DialogContent>
                         <DialogActions>
@@ -255,7 +263,6 @@ export default function CustomerCard() {
                                   reason: reportReason,
                                 })
                                 .then((res) => {
-                                  console.log(res);
                                   setReportReason("");
                                   setShowSuccessAlert(true);
                                 })

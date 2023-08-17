@@ -183,7 +183,7 @@ const ProductCard = ({ kitchenId, productId }) => {
       .putProduct(kitchenId, productId, updatedProduct)
       .then((res) => {
         setIsEditing(false);
-        setProduct(updatedProduct); // Update the product state
+        setProduct(updatedProduct);
         handleEditDialogClose();
         setIsEditMode(false);
       })
@@ -421,21 +421,21 @@ const ProductCard = ({ kitchenId, productId }) => {
               <Typography variant="body1" color="textSecondary">
                 Calories: {product.calories}
               </Typography>
-              <TextField
-                type="number"
-                label="Quantity"
-                variant="outlined"
-                sx={{
-                  width: "200px",
-                  marginTop: "1rem",
-                }}
-                value={selectedQuantity}
-                onChange={(e) => setSelectedQuantity(e.target.value)}
-                inputProps={{ min: 1, max: 15 }}
-              />
 
               {!isVendor && (
                 <div>
+                  <TextField
+                    type="number"
+                    label="Quantity"
+                    variant="outlined"
+                    sx={{
+                      width: "200px",
+                      marginTop: "1rem",
+                    }}
+                    value={selectedQuantity}
+                    onChange={(e) => setSelectedQuantity(e.target.value)}
+                    inputProps={{ min: 1, max: 15 }}
+                  />
                   <Button
                     variant="contained"
                     color="primary"

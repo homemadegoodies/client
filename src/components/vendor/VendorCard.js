@@ -53,15 +53,27 @@ export default function VendorCard() {
   useEffect(() => {
     setLoading(true);
     fetchVendor();
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+    setLoading(false);
   }, []);
 
   if (loading) {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+    return (
+      <Card
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "300px",
+          width: "100%",
+          opacity: 0.5,
+          transition: "opacity 0.5s ease-out",
+          backgroundColor: "transparent",
+          boxShadow: "none",
+        }}
+      >
+        <CircularProgress />
+      </Card>
+    );
   }
 
   const handleEdit = () => {
@@ -85,8 +97,16 @@ export default function VendorCard() {
       .put(vendorId, updatedData)
       .then((res) => {
         setOpenEditDialog(false);
-        setContext({ ...context, ...updatedData });
-      });
+        setVendor({
+          ...vendor,
+          ...updatedData,
+        });
+        setContext({
+          ...context,
+          ...updatedData,
+        });
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -113,18 +133,6 @@ export default function VendorCard() {
             }}
           >
             <CardContent>
-              {loading && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <CircularProgress />
-                </Box>
-              )}
               {!loading && (
                 <Box>
                   {context.id === vendorId && (
@@ -143,7 +151,7 @@ export default function VendorCard() {
                           <VendorForm
                             handleEditCancel={handleEditCancel}
                             vendorId={vendorId}
-                            vendorData={context}
+                            vendorData={vendor}
                             onSave={(updatedData) => {
                               handleSave(updatedData);
                               setOpenEditDialog(false);
@@ -232,6 +240,7 @@ export default function VendorCard() {
                             name="reason"
                             value={reportReason}
                             onChange={(e) => setReportReason(e.target.value)}
+                            autoFocus
                           />
                         </DialogContent>
                         <DialogActions>
