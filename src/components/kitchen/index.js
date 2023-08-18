@@ -49,16 +49,19 @@ const KitchenList = () => {
     <Slide in={true} direction="up" mountOnEnter unmountOnExit>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div style={{ width: "90%" }}>
-          {context.isVendor && context.id && (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddKitchen}
-              sx={{ float: "right", mb: 2 }}
-            >
-              Add a Kitchen
-            </Button>
-          )}
+          {context.isVendor &&
+            context.id &&
+            kitchens.length > 0 &&
+            !kitchens.some((kitchen) => kitchen.vendorId === context.id) && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddKitchen}
+                sx={{ float: "right", mb: 2 }}
+              >
+                Add a Kitchen
+              </Button>
+            )}
 
           <TextField
             label="Search kitchens"

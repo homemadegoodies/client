@@ -187,23 +187,10 @@ const CartCard = ({ cartId }) => {
       const updatedCartProducts = cartProducts.filter(
         (product) => product.productId !== productId
       );
-
-      // If there are no more products in the cart, delete the cart
-      if (updatedCartProducts.length === 0) {
-        createAPIEndpoint(ENDPOINTS.carts)
-          .deleteCart(customerId, cartKitchenId, cart.id)
-          .then(() => {
-            setCartDeleted(true);
-          })
-          .catch((err) => console.log(err));
-      } else {
-        // Update the cart and isInCart array
-        updateCart(updatedCartProducts);
-      }
-    } else {
-      // Update the cart and isInCart array
-      updateCart(cartProducts);
+      setCartProducts(updatedCartProducts);
     }
+
+    updateCart();
   };
 
   const updateCart = () => {

@@ -64,6 +64,7 @@ const KitchenForm = ({ isEditMode }) => {
             "Chinese",
             "Indian",
             "Japanese",
+            "Korean",
             "Thai",
             "Vietnamese",
             "Mexican",
