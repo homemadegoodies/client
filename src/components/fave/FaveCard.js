@@ -23,7 +23,6 @@ import {
   Button,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { makeStyles } from "@mui/styles";
@@ -148,30 +147,27 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
       return;
     }
 
+    // loop through the faveProducts array to find the product with the specified productId
     const productToAdd = faveProducts.find(
-      (product) => product.productId === productId
+      (product) => product.id === productId
     );
 
     if (!productToAdd) {
       return;
     }
 
-    const productsToAdd = productToAdd.id;
+    // Create an array with the single product to be added to cart
+    const productsToAdd = [{ productId: productToAdd.id, quantity: 1 }];
 
     e.stopPropagation();
     createAPIEndpoint(ENDPOINTS.carts)
       .postCart(customerId, kitchenId, {
-        customerId: customerId,
+        customerId: context.id,
         kitchenId: kitchenId,
-        cartProducts: [
-          {
-            quantity: selectedQuantity,
-            productId: productsToAdd,
-          },
-        ],
+        cartProducts: productsToAdd,
       })
       .then((res) => {
-        setIsInCart([...isInCart, productId]); // Update the state with the new productId
+        setIsInCart((prevProducts) => [...prevProducts, productId]); // Update the state with the new productId
         setAddedToCart(true);
       })
       .catch((err) => console.log(err));
@@ -186,7 +182,7 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
 
     // Find the product in faveProducts array with the specified productId
     const productToRemove = faveProducts.find(
-      (product) => product.productId === productId
+      (product) => product.id === productId
     );
 
     if (!productToRemove) {
@@ -241,7 +237,7 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
         })),
       })
       .then((res) => {
-        setIsInCart(faveProducts.map((product) => product.productId)); // Update the state with the new productId
+        setIsInCart(faveProducts.map((product) => product.id)); // Update the state with the new productId
         setAddedToCart(true);
       })
       .catch((err) => console.log(err));
@@ -355,9 +351,9 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
                 <IconButton
                   aria-label="add to cart"
                   color="primary"
-                  onClick={(e) => handleAddToCart(e, product.productId)}
+                  onClick={(e) => handleAddToCart(e, product.id)}
                 >
-                  {isInCart ? (
+                  {isInCart.includes(product.id) ? (
                     <ShoppingCartIcon />
                   ) : (
                     <ShoppingCartOutlinedIcon />
@@ -366,9 +362,9 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
                 <IconButton
                   aria-label="add to faves"
                   color="error"
-                  onClick={(e) => handleRemoveFromFaves(e, product.productId)}
+                  onClick={(e) => handleRemoveFromFaves(e, product.id)}
                 >
-                  {isInFaves ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  <FavoriteIcon />
                 </IconButton>
               </CardActions>
             )}

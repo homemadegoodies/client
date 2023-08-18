@@ -100,10 +100,6 @@ function HomeContent() {
     setAnchorEl(null);
   };
 
-  // const handleHomeClick = () => {
-  //   navigate("/student/home");
-  // };
-
   return (
     <Box sx={{ display: "flex" }}>
       <AppBar position="absolute" open={open}>

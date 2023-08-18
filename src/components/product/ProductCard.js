@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import useStateContext from "../../hooks/useStateContext";
 import { createAPIEndpoint, ENDPOINTS } from "../../api";
@@ -76,7 +76,7 @@ const ProductCard = ({ kitchenId, productId }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isButtonClicked, setIsButtonClicked] = useState(false);
   const [selectedView, setSelectedView] = useState("ingredients");
-  const [isInCart, setIsInCart] = useState([]);
+  const [cartProducts, setCartProducts] = useState([]);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [isInFaves, setIsInFaves] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -115,11 +115,11 @@ const ProductCard = ({ kitchenId, productId }) => {
         const allCartProducts = fetchedCarts.reduce(
           (accumulatedProducts, cart) => [
             ...accumulatedProducts,
-            ...cart.cartProducts,
+            ...cart.cartProducts.map((cartProduct) => cartProduct.productId),
           ],
           []
         );
-        setIsInCart(allCartProducts);
+        setCartProducts(allCartProducts);
       } catch (err) {
         console.log(err);
       }
@@ -244,7 +244,7 @@ const ProductCard = ({ kitchenId, productId }) => {
         ],
       })
       .then((res) => {
-        setIsInCart(true);
+        setCartProducts(res.data.cartProducts);
       })
       .catch((err) => console.log(err));
   };
@@ -342,7 +342,11 @@ const ProductCard = ({ kitchenId, productId }) => {
         color="primary"
         onClick={handleAddToCart}
       >
-        {isInCart ? <ShoppingCartIcon /> : <ShoppingCartOutlinedIcon />}{" "}
+        {cartProducts.includes(productId) ? (
+          <ShoppingCartIcon />
+        ) : (
+          <ShoppingCartOutlinedIcon />
+        )}
       </IconButton>
       <IconButton
         aria-label="add to faves"

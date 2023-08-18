@@ -78,6 +78,11 @@ export const createAPIEndpoint = (endpoint) => {
       axios.delete(API_URL + `customers/${customerId}/${endpoint}/${faveId}`),
     deleteCart: (customerId, orderId, cartId) =>
       axios.delete(API_URL + `customers/${customerId}/${endpoint}/${cartId}`),
+    deleteCartProduct: (customerId, cartId, productId) =>
+      axios.delete(
+        API_URL +
+          `customers/${customerId}/${endpoint}/${cartId}/products/${productId}`
+      ),
     deleteOrder: (kitchenId, orderId) =>
       axios.delete(API_URL + `kitchens/${kitchenId}/${endpoint}/${orderId}`),
   };

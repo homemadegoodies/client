@@ -28,6 +28,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { makeStyles } from "@mui/styles";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { set } from "date-fns";
 
 const useStyles = makeStyles({
   root: {
@@ -165,7 +166,7 @@ const CartCard = ({ cartId }) => {
     }
 
     productToUpdate.quantity += 1; // Update the quantity of the product
-    updateCart(); // Call the API method to update the cart
+    updateCart();
   };
 
   const handleDecrementQuantity = (productId) => {
@@ -179,17 +180,30 @@ const CartCard = ({ cartId }) => {
     }
 
     // Ensure the quantity doesn't go below 1
-    productToUpdate.quantity = Math.max(productToUpdate.quantity - 1, 1);
+    productToUpdate.quantity = Math.max(productToUpdate.quantity - 1, 0);
 
     if (productToUpdate.quantity === 0) {
       // Remove the product from the cart
       const updatedCartProducts = cartProducts.filter(
         (product) => product.productId !== productId
       );
-      setCartProducts(updatedCartProducts);
-    }
 
-    updateCart(); // Call the API method to update the cart
+      // If there are no more products in the cart, delete the cart
+      if (updatedCartProducts.length === 0) {
+        createAPIEndpoint(ENDPOINTS.carts)
+          .deleteCart(customerId, cartKitchenId, cart.id)
+          .then(() => {
+            setCartDeleted(true);
+          })
+          .catch((err) => console.log(err));
+      } else {
+        // Update the cart and isInCart array
+        updateCart(updatedCartProducts);
+      }
+    } else {
+      // Update the cart and isInCart array
+      updateCart(cartProducts);
+    }
   };
 
   const updateCart = () => {
@@ -385,34 +399,34 @@ const CartCard = ({ cartId }) => {
             Order created successfully!
           </Alert>
         ) : (
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-            <CardActions
-              className={classes.actions}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              mt: 2,
+            }}
+          >
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleDeleteCart}
             >
+              Delete Cart
+            </Button>
+            {!orderCreated && (
               <Button
                 variant="contained"
-                color="error"
-                onClick={handleDeleteCart}
-                sx={{ marginLeft: "auto" }}
+                color="primary"
+                onClick={handleMakeOrder}
+                // stick to the right
+                sx={{ ml: "auto" }}
+                disabled={
+                  cartProducts.length === 0 || calculateTotalPrice() === 0
+                }
               >
-                Delete Cart
+                Make Order
               </Button>
-              {!orderCreated && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleMakeOrder}
-                  sx={{ marginLeft: "auto" }}
-                >
-                  Make Order
-                </Button>
-              )}
-            </CardActions>
+            )}
             <Dialog
               open={stripeCheckoutOpen}
               onClose={handleStripeCheckoutClose}
@@ -485,77 +499,76 @@ const CartCard = ({ cartId }) => {
       sx={{
         opacity: loading ? 0.5 : 1,
         transition: "opacity 1s",
+        maxWidth: 400,
         margin: "auto",
         marginTop: 2,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
       }}
     >
       <CardHeader title={cartKitchen ? cartKitchen.name : <LinearProgress />} />
       <Divider />
       <CardContent>
-        {cartProducts.map((product) => (
-          <Box
-            key={product.productId}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              mb: 2,
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Avatar sx={{ width: 80, height: 80 }}>
-                {" "}
-                {/* Increase the size of the avatar */}
-                <CardMedia
-                  component="img"
-                  image={product.imageURL}
-                  alt={product.name}
-                  sx={{ width: "100%", height: "100%", objectFit: "contain" }}
-                />
-              </Avatar>
-              <Box sx={{ ml: 1 }}>
-                <Typography variant="h6" gutterBottom>
-                  {product.name}
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  Price: ${product.price}
-                </Typography>
+        {cartProducts
+          .filter((product) => product.quantity > 0) // Filter out products with quantity 0
+          .map((product) => (
+            <Box
+              key={product.productId}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                mb: 2,
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Avatar sx={{ width: 80, height: 80 }}>
+                  {" "}
+                  {/* Increase the size of the avatar */}
+                  <CardMedia
+                    component="img"
+                    image={product.imageURL}
+                    alt={product.name}
+                    sx={{ width: "100%", height: "100%", objectFit: "contain" }}
+                  />
+                </Avatar>
+                <Box sx={{ ml: 1 }}>
+                  <Typography variant="h6" gutterBottom>
+                    {product.name}
+                  </Typography>
+                  <Typography variant="body2" gutterBottom>
+                    Price: ${product.price}
+                  </Typography>
+                </Box>
               </Box>
+              {isCustomer && (
+                <CardActions
+                  className={classes.actions}
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
+                  <IconButton
+                    color="primary"
+                    aria-label="decrease quantity"
+                    onClick={() => handleDecrementQuantity(product.productId)}
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                  <OutlinedInput
+                    value={product.quantity}
+                    inputProps={{ "aria-label": "quantity", readOnly: true }}
+                    sx={{ width: 50, textAlign: "center" }}
+                  />
+                  <IconButton
+                    color="primary"
+                    aria-label="increase quantity"
+                    onClick={() => handleIncrementQuantity(product.productId)}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </CardActions>
+              )}
             </Box>
-            {isCustomer && (
-              <CardActions
-                className={classes.actions}
-                sx={{ display: "flex", alignItems: "center" }}
-              >
-                <IconButton
-                  color="primary"
-                  aria-label="decrease quantity"
-                  onClick={() => handleDecrementQuantity(product.productId)}
-                  // disabled={product.quantity === 1}
-                >
-                  <RemoveIcon />
-                </IconButton>
-                <OutlinedInput
-                  value={product.quantity}
-                  inputProps={{ "aria-label": "quantity", readOnly: true }}
-                  sx={{ width: 50, textAlign: "center" }}
-                />
-                <IconButton
-                  color="primary"
-                  aria-label="increase quantity"
-                  onClick={() => handleIncrementQuantity(product.productId)}
-                >
-                  <AddIcon />
-                </IconButton>
-              </CardActions>
-            )}
-          </Box>
-        ))}
-        <Divider />
+          ))}
       </CardContent>
+      <Divider />
 
       <CardContent>
         <CartTotal cartProducts={cartProducts} />

@@ -484,41 +484,43 @@ const CustomerOrder = ({ orderId }) => {
       />
       <Divider />
       <CardContent>
-        {orderProducts.map((product) => (
-          <Box
-            key={product.productId}
-            sx={{ display: "flex", alignItems: "center", mb: 2 }}
-          >
-            <Avatar sx={{ width: 60, height: 60 }}>
-              <CardMedia
-                component="img"
-                image={product.imageURL}
-                alt={product.name}
-                sx={{ width: "100%", height: "100%" }}
-              />
-            </Avatar>
-            <Box sx={{ ml: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                {product.name}
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                Price: ${product.price}
-              </Typography>
-            </Box>
-            {isCustomer && (
-              <CardActions
-                className={classes.actions}
-                sx={{ marginLeft: "auto" }}
-              >
-                <OutlinedInput
-                  value={product.quantity}
-                  inputProps={{ "aria-label": "quantity", readOnly: true }}
-                  sx={{ width: 50, textAlign: "center" }}
+        {orderProducts
+          .filter((product) => product.quantity > 0) // Filter out products with quantity 0
+          .map((product) => (
+            <Box
+              key={product.productId}
+              sx={{ display: "flex", alignItems: "center", mb: 2 }}
+            >
+              <Avatar sx={{ width: 60, height: 60 }}>
+                <CardMedia
+                  component="img"
+                  image={product.imageURL}
+                  alt={product.name}
+                  sx={{ width: "100%", height: "100%" }}
                 />
-              </CardActions>
-            )}
-          </Box>
-        ))}
+              </Avatar>
+              <Box sx={{ ml: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  {product.name}
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  Price: ${product.price}
+                </Typography>
+              </Box>
+              {isCustomer && (
+                <CardActions
+                  className={classes.actions}
+                  sx={{ marginLeft: "auto" }}
+                >
+                  <OutlinedInput
+                    value={product.quantity}
+                    inputProps={{ "aria-label": "quantity", readOnly: true }}
+                    sx={{ width: 50, textAlign: "center" }}
+                  />
+                </CardActions>
+              )}
+            </Box>
+          ))}
       </CardContent>
 
       <Divider />
