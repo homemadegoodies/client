@@ -32,7 +32,7 @@ export default function AboutView() {
               Welcome to Homemade Goodies - your one-stop digital marketplace
               for delicious homemade foods! We believe that the heart and soul
               of authentic cuisine lie in cherished family recipes, lovingly
-              prepared by professional home cooks. Our platform is designed to
+              prepared by talented home cooks. Our platform is designed to
               connect these culinary artisans from across Ontario with food
               enthusiasts who crave wholesome and genuine flavors.
             </Typography>
