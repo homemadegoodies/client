@@ -16,6 +16,8 @@ const getFreshContext = () => {
         province: "",
         postalCode: "",
         profilePicture: "",
+        faves: {},
+        carts: {},
       })
     );
   return JSON.parse(localStorage.getItem("context"));
@@ -32,8 +34,37 @@ export default function useStateContext() {
       localStorage.removeItem("context");
       setContext(getFreshContext());
     },
+    addToFaves: (kitchenId, productId) => {
+      const updatedFaves = {
+        ...context.faves,
+        [kitchenId]: [...(context.faves[kitchenId] || []), productId],
+      };
+      setContext({ ...context, faves: updatedFaves });
+    },
+    removeFromFaves: (kitchenId, productId) => {
+      const updatedFaves = {
+        ...context.faves,
+        [kitchenId]: context.faves[kitchenId].filter((id) => id !== productId),
+      };
+      setContext({ ...context, faves: updatedFaves });
+    },
+    addToCart: (kitchenId, productId) => {
+      const updatedCarts = {
+        ...context.carts,
+        [kitchenId]: [...(context.carts[kitchenId] || []), productId],
+      };
+      setContext({ ...context, carts: updatedCarts });
+    },
+    removeFromCart: (kitchenId, productId) => {
+      const updatedCarts = {
+        ...context.carts,
+        [kitchenId]: context.carts[kitchenId].filter((id) => id !== productId),
+      };
+      setContext({ ...context, carts: updatedCarts });
+    },
   };
 }
+
 
 export function ContextProvider({ children }) {
   const [context, setContext] = useState(getFreshContext());

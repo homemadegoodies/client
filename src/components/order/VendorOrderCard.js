@@ -75,7 +75,7 @@ const VendorOrder = ({ kitchenId, orderId }) => {
   const [orderCancelled, setOrderCancelled] = useState(false);
   const [acceptDialogOpen, setAcceptDialogOpen] = useState(false);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
-  const [status, setStatus] = useState("Pending");
+  const [status, setStatus] = useState("In Progress");
   const [deliveryDate, setDeliveryDate] = useState(new Date());
   const [acceptButtonClicked, setAcceptButtonClicked] = useState(false);
   const vendorId = context.id;
@@ -389,11 +389,11 @@ const VendorOrder = ({ kitchenId, orderId }) => {
             </Button>
           )}
 
-          {acceptButtonClicked && (
+          {order.status === "In Progress"  && (
             <Button
               variant="contained"
               color="primary"
-              onClick={handleUpdateOrder}
+              onClick={handleAcceptOrder}
               fullWidth
               sx={{ width: "100%" }}
             >
@@ -415,7 +415,6 @@ const VendorOrder = ({ kitchenId, orderId }) => {
                   onChange={(e) => setStatus(e.target.value)}
                   label="Status"
                 >
-                  <MenuItem value="Pending">Pending</MenuItem>
                   <MenuItem value="In Progress">In Progress</MenuItem>
                   <MenuItem value="Ready">Ready</MenuItem>
                 </Select>

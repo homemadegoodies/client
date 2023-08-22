@@ -85,67 +85,63 @@ const ProductCard = ({ kitchenId, productId }) => {
   const cutomerId = context.id;
 
   useEffect(() => {
+    // Fetch kitchen data
     createAPIEndpoint(ENDPOINTS.kitchens)
       .fetchById(kitchenId)
       .then((res) => setKitchen(res.data))
       .catch((err) => console.log(err));
-  }, [kitchenId]);
 
-  useEffect(() => {
+    // Fetch product data
     setLoading(true);
     createAPIEndpoint(ENDPOINTS.products)
       .fetchProduct(kitchenId.toString(), productId)
       .then((res) => {
         setProduct(res.data);
         setIsInFaves(res.data.isInFaves || []);
+        setLoading(false);
       })
-      .catch((err) => console.log(err))
-      .finally(() => {
-        setTimeout(() => setLoading(false), 500);
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
       });
-  }, [kitchenId, productId]);
 
-  if (isCustomer) {
-    const fetchCarts = async () => {
-      try {
-        const response = await createAPIEndpoint(
-          ENDPOINTS.carts
-        ).fetchByCustomerId(context.id);
-        const fetchedCarts = response.data;
-        const allCartProducts = fetchedCarts.reduce(
-          (accumulatedProducts, cart) => [
-            ...accumulatedProducts,
-            ...cart.cartProducts.map((cartProduct) => cartProduct.productId),
-          ],
-          []
-        );
-        setCartProducts(allCartProducts);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchCarts();
+    if (isCustomer) {
+      // Fetch cart data
+      const fetchCarts = async () => {
+        try {
+          const response = await createAPIEndpoint(ENDPOINTS.carts).fetchByCustomerId(context.id);
+          const fetchedCarts = response.data;
+          const allCartProducts = fetchedCarts.reduce(
+            (accumulatedProducts, cart) => [
+              ...accumulatedProducts,
+              ...cart.cartProducts.map((cartProduct) => cartProduct.productId),
+            ],
+            []
+          );
+          setCartProducts(allCartProducts);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      fetchCarts();
 
-    const fetchFaves = async () => {
-      try {
-        const response = await createAPIEndpoint(
-          ENDPOINTS.faves
-        ).fetchByCustomerId(context.id);
-        const fetchedFaves = response.data;
-        const allFaveProducts = fetchedFaves.reduce(
-          (accumulatedProducts, fave) => [
-            ...accumulatedProducts,
-            ...fave.faveProducts,
-          ],
-          []
-        );
-        setIsInFaves(allFaveProducts);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchFaves();
-  }
+      // Fetch faves data
+      const fetchFaves = async () => {
+        try {
+          const response = await createAPIEndpoint(ENDPOINTS.faves).fetchByCustomerId(context.id);
+          const fetchedFaves = response.data;
+          const allFaveProducts = fetchedFaves.reduce(
+            (accumulatedProducts, fave) => [...accumulatedProducts, ...fave.faveProducts],
+            []
+          );
+          setIsInFaves(allFaveProducts);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      fetchFaves();
+    }
+  }, [kitchenId, productId, isCustomer, context.id]);
 
   const handleProductClick = () => {
     if (isButtonClicked) {
@@ -271,6 +267,10 @@ const ProductCard = ({ kitchenId, productId }) => {
     return isInFaves.some((faveProduct) => faveProduct.productId === productId);
   };
 
+  const isProductInCart = () => {
+    return cartProducts.some((cartProduct) => cartProduct.productId === productId);
+  };
+
   if (!product) {
     return null;
   }
@@ -342,7 +342,8 @@ const ProductCard = ({ kitchenId, productId }) => {
         color="primary"
         onClick={handleAddToCart}
       >
-        {cartProducts.includes(productId) ? (
+        { isProductInCart() ?
+        (
           <ShoppingCartIcon />
         ) : (
           <ShoppingCartOutlinedIcon />
