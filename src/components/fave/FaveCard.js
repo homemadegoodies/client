@@ -64,6 +64,7 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
   const [faveKitchen, setFaveKitchen] = useState(null);
   const [faveProducts, setFaveProducts] = useState([]);
   const [isInCart, setIsInCart] = useState([]);
+  const [currentProduct, setCurrentProduct] = useState(null);
   const [addedToCart, setAddedToCart] = useState(false);
   const [removedFromFaves, setRemovedFromFaves] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -85,6 +86,8 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
       setFave(fetchedFave);
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -211,6 +214,7 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
 
         // refetch faves to update the fave state
         fetchFave();
+        setCurrentProduct(productToRemove);
         setRemovedFromFaves(true);
       })
       .catch((err) => console.log(err));
@@ -266,29 +270,11 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
         setDeletedFave(true);
       })
       .catch((err) => console.log(err));
+
+    setConfirmDialogOpen(false);
   };
 
   if (loading) {
-    return (
-      <Card
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "300px",
-          width: "100%",
-          opacity: 0.5,
-          transition: "opacity 0.5s ease-out",
-          backgroundColor: "transparent",
-          boxShadow: "none",
-        }}
-      >
-        <CircularProgress />
-      </Card>
-    );
-  }
-
-  if (!fave || faveProducts.length === 0) {
     return (
       <Card
         sx={{
@@ -377,9 +363,11 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
           <Alert
             severity="success"
             sx={{ marginTop: 2 }}
-            onClose={handleCloseAlert}
+            onClose={() => {
+              window.location.reload();
+            }}
           >
-            Fave deleted!
+            Fave deleted successfully!
           </Alert>
         )}
 
@@ -389,7 +377,11 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
             sx={{ marginTop: 2 }}
             onClose={handleCloseAlert}
           >
-            Removed from faves!
+            {`${
+              currentProduct
+                ? `${currentProduct.name} removed from faves`
+                : "Product removed from faves"
+            }`}
           </Alert>
         )}
 
@@ -399,7 +391,12 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
             sx={{ marginTop: 2 }}
             onClose={handleCloseAlert}
           >
-            Added to cart!
+            {`${
+              currentProduct
+                ? `${currentProduct.name} added to cart`
+                : "Product added to cart"
+            }`
+            }
           </Alert>
         )}
 
