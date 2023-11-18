@@ -139,7 +139,7 @@ export default function ContactView() {
 
             <TextareaAutosize
               name="message"
-              aria-label="minimum height"
+              aria-label="message"
               minRows={6}
               placeholder="Enter a message"
               className={classes.textArea}

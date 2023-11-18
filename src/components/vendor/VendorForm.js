@@ -249,7 +249,6 @@ export default function VendorForm({ vendorData, onSave, handleEditCancel }) {
               !formData.lastName ||
               !formData.username ||
               !formData.email ||
-              !profilePicture ||
               !formData.phoneNumber ||
               !formData.address ||
               !formData.postalCode ||

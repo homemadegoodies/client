@@ -62,7 +62,7 @@ export default function HomeLayout() {
           <Stack direction="row" spacing={2}>
             <IconButton
               size="large"
-              aria-label="Login"
+              aria-label="Account"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={() => navigate("/account")}

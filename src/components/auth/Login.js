@@ -200,6 +200,9 @@ export default function Login() {
                   error: true,
                   helperText: errors.password,
                 })}
+                inputProps={{
+                  'id': "password"
+                }}
               />
             </Grid>
             <Grid item xs={12}>

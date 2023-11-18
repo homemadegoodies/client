@@ -3,7 +3,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
-import ReceiptIcon from "@mui/icons-material/Receipt";
+import OrderIcon from "@mui/icons-material/Receipt";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import Divider from "@mui/material/Divider";
 import PersonIcon from "@mui/icons-material/Person";
@@ -29,7 +29,7 @@ export default function VendorListItems() {
       </ListItemButton>
       <ListItemButton onClick={() => navigate(`/vendor/${context.id}/orders`)}>
         <ListItemIcon>
-          <ReceiptIcon />
+          <OrderIcon />
         </ListItemIcon>
         <ListItemText primary="Orders" />
       </ListItemButton>

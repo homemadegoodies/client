@@ -389,7 +389,7 @@ const VendorOrder = ({ kitchenId, orderId }) => {
             </Button>
           )}
 
-          {order.status === "In Progress"  && (
+          {order.status === "In Progress" && (
             <Button
               variant="contained"
               color="primary"

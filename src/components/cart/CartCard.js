@@ -405,26 +405,26 @@ const CartCard = ({ cartId }) => {
                 variant="contained"
                 color="primary"
                 onClick={handleMakeOrder}
-                // stick to the right
                 sx={{ ml: "auto" }}
                 disabled={
                   cartProducts.length === 0 || calculateTotalPrice() === 0
                 }
               >
-                Make Order
+                Checkout
               </Button>
             )}
             <Dialog
               open={stripeCheckoutOpen}
               onClose={handleStripeCheckoutClose}
             >
-              <DialogTitle>Make an Order</DialogTitle>
+              <DialogTitle>Checkout</DialogTitle>
               <DialogContent>
                 <DialogContentText>
                   Please enter your fake credit card details:
                 </DialogContentText>
                 <br />
                 <CardElement
+                  id="card-element"
                   options={{
                     style: {
                       base: {

@@ -309,6 +309,9 @@ export default function Register() {
                     }
                     error={passwordError ? true : false}
                     helperText={passwordError}
+                    inputProps={{
+                      'id': "password"
+                    }}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -327,6 +330,9 @@ export default function Register() {
                     }
                     error={confirmPasswordError ? true : false}
                     helperText={confirmPasswordError}
+                    inputProps={{
+                      'id': "confirmPassword"
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>

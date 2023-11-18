@@ -395,8 +395,7 @@ const FaveCard = ({ faveId, onFaveTotalChange }) => {
               currentProduct
                 ? `${currentProduct.name} added to cart`
                 : "Product added to cart"
-            }`
-            }
+            }`}
           </Alert>
         )}
 

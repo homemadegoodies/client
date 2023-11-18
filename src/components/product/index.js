@@ -56,7 +56,7 @@ const ProductList = ({ kitchenId }) => {
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div style={{ width: "90%" }}>
           <TextField
-            label="Search products"
+            label="Search dishes"
             variant="outlined"
             fullWidth
             margin="normal"

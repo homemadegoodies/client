@@ -304,6 +304,10 @@ const KitchenForm = ({ isEditMode }) => {
                       value={kitchen.category}
                       onChange={handleChange}
                       label="Category"
+                      inputProps={{
+                        id: "category",
+                        name: "category",
+                      }}
                     >
                       <MenuItem value="Italian">Italian</MenuItem>
                       <MenuItem value="Greek">Greek</MenuItem>

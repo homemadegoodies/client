@@ -253,7 +253,6 @@ export default function CustomerForm({
               !formData.lastName ||
               !formData.username ||
               !formData.email ||
-              !profilePicture ||
               !formData.phoneNumber ||
               !formData.address ||
               !formData.postalCode ||

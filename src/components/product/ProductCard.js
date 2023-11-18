@@ -109,7 +109,9 @@ const ProductCard = ({ kitchenId, productId }) => {
       // Fetch cart data
       const fetchCarts = async () => {
         try {
-          const response = await createAPIEndpoint(ENDPOINTS.carts).fetchByCustomerId(context.id);
+          const response = await createAPIEndpoint(
+            ENDPOINTS.carts
+          ).fetchByCustomerId(context.id);
           const fetchedCarts = response.data;
           const allCartProducts = fetchedCarts.reduce(
             (accumulatedProducts, cart) => [
@@ -128,10 +130,15 @@ const ProductCard = ({ kitchenId, productId }) => {
       // Fetch faves data
       const fetchFaves = async () => {
         try {
-          const response = await createAPIEndpoint(ENDPOINTS.faves).fetchByCustomerId(context.id);
+          const response = await createAPIEndpoint(
+            ENDPOINTS.faves
+          ).fetchByCustomerId(context.id);
           const fetchedFaves = response.data;
           const allFaveProducts = fetchedFaves.reduce(
-            (accumulatedProducts, fave) => [...accumulatedProducts, ...fave.faveProducts],
+            (accumulatedProducts, fave) => [
+              ...accumulatedProducts,
+              ...fave.faveProducts,
+            ],
             []
           );
           setIsInFaves(allFaveProducts);
@@ -268,7 +275,9 @@ const ProductCard = ({ kitchenId, productId }) => {
   };
 
   const isProductInCart = () => {
-    return cartProducts.some((cartProduct) => cartProduct.productId === productId);
+    return cartProducts.some(
+      (cartProduct) => cartProduct.productId === productId
+    );
   };
 
   if (!product) {
@@ -342,8 +351,7 @@ const ProductCard = ({ kitchenId, productId }) => {
         color="primary"
         onClick={handleAddToCart}
       >
-        { isProductInCart() ?
-        (
+        {isProductInCart() ? (
           <ShoppingCartIcon />
         ) : (
           <ShoppingCartOutlinedIcon />
@@ -426,6 +434,32 @@ const ProductCard = ({ kitchenId, productId }) => {
               <Typography variant="body1" color="textSecondary">
                 Calories: {product.calories}
               </Typography>
+
+              {isVendor && kitchen && cutomerId === kitchen.vendorId && (
+                <>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                      marginTop: "1rem",
+                      marginRight: "1rem",
+                    }}
+                    onClick={handleEditDialogOpen}
+                  >
+                    Edit Product
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    sx={{
+                      marginTop: "1rem",
+                    }}
+                    onClick={handleDeleteDialogOpen}
+                  >
+                    Delete Product
+                  </Button>
+                </>
+              )}
 
               {!isVendor && (
                 <div>
